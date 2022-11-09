@@ -2,8 +2,9 @@ import React from 'react';
 import logo from './logo.svg';
 import { useTranslation } from "react-i18next";
 import "./translations/i18n";
-import './App.css';
+import './App.less'
 import i18n from "i18next";
+import { Button } from 'antd';
 
 function App() {
   const { t } = useTranslation();
@@ -14,8 +15,9 @@ function App() {
         <p>{t('welcome')}
 
         </p>
-        <button onClick={()=>{i18n.changeLanguage("ru")}}>change ru</button>
-        <button onClick={()=>{i18n.changeLanguage("en")}}>change en</button>
+        <Button  type="primary" onClick={()=>{i18n.changeLanguage("ru")}}>change ru</Button>
+        <Button  type="primary" onClick={()=>{i18n.changeLanguage("en")}}>change en</Button>
+        <Button type='text'></Button>
         <a
           className="App-link"
           href="https://reactjs.org"
