@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Button, Form, Input } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 const formItemLayout = {
   labelCol: {
@@ -27,7 +28,12 @@ import './sign-up.less';
 
 export const SignUp = () => {
   const [form] = Form.useForm();
-
+  const { t } = useTranslation();
+  const loginMsg = t('loginMsg');
+  const passMsg = t('passMsg');
+  const confirmPassMsg = t('confirmPassMsg');
+  const passMatchMsg = t('passMatchMsg');
+  const nameMsg = t('nameMsg');
   const onFinish = (values: {}) => {
     console.log('Received values of form: ', values);
   };
@@ -36,26 +42,26 @@ export const SignUp = () => {
     <Form {...formItemLayout} form={form} name="register" onFinish={onFinish} scrollToFirstError>
       <Form.Item
         name="userName"
-        label="Name"
-        rules={[{ required: true, message: 'Please input your name!', whitespace: true }]}
+        label={t('name')}
+        rules={[{ required: true, message: nameMsg, whitespace: true }]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         name="login"
-        label="Login"
-        rules={[{ required: true, message: 'Please input your login!', whitespace: true }]}
+        label={t('login')}
+        rules={[{ required: true, message: loginMsg, whitespace: true }]}
       >
         <Input />
       </Form.Item>
 
       <Form.Item
         name="password"
-        label="Password"
+        label={t('password')}
         rules={[
           {
             required: true,
-            message: 'Please input your password!',
+            message: passMsg,
           },
         ]}
         hasFeedback
@@ -65,20 +71,20 @@ export const SignUp = () => {
 
       <Form.Item
         name="confirm"
-        label="Confirm Password"
+        label={t('confirmPassword')}
         dependencies={['password']}
         hasFeedback
         rules={[
           {
             required: true,
-            message: 'Please confirm your password!',
+            message: confirmPassMsg,
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
               if (!value || getFieldValue('password') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('The two passwords that you entered do not match!'));
+              return Promise.reject(new Error(passMatchMsg));
             },
           }),
         ]}
@@ -88,10 +94,10 @@ export const SignUp = () => {
 
       <Form.Item {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
-          Register
+          {t('register')}
         </Button>
         <Button type="primary" loading>
-          Registering...
+          {t('registering')}
         </Button>
       </Form.Item>
     </Form>
