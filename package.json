@@ -29,6 +29,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+     "lint": "npx eslint .",
     "test": "craco test",
     "eject": "react-scripts eject"
   },

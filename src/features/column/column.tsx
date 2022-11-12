@@ -1,4 +1,4 @@
 import React from 'react';
-import './column.scss';
+import './column.less';
 
-export const Column = () => <div >Column</div>;
+export const Column = () => <div>Column</div>;
