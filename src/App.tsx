@@ -1,31 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import { useTranslation } from "react-i18next";
-import "./translations/i18n";
-import './App.css';
-import i18n from "i18next";
-
+import { useTranslation } from 'react-i18next';
+import { Layout } from 'antd';
+import { HeaderLayout } from './features/header/header';
+import { FooterLayout } from './features/footer/footer';
+import { SignIn } from './features/sign-in/sign-in';
+import { SignUp } from './features/sign-up/sign-up';
+import './translations/i18n';
+import './App.less';
+import { Main } from './pages/main/main';
+import { Board } from './pages/board/board';
+const { Content } = Layout;
 function App() {
   const { t } = useTranslation();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{t('welcome')}
-
-        </p>
-        <button onClick={()=>{i18n.changeLanguage("ru")}}>change ru</button>
-        <button onClick={()=>{i18n.changeLanguage("en")}}>change en</button>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      <HeaderLayout></HeaderLayout>
+      <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
+          <SignIn></SignIn>
+          <SignUp></SignUp>
+          {t('welcome')}
+        </div>
+        <Main></Main>
+        <Board></Board>
+      </Content>
+      <FooterLayout></FooterLayout>
+    </Layout>
   );
 }
 
