@@ -1,18 +1,24 @@
-import { createAction, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppDispatch } from '../../store';
 
-const signIn = createAction<string>('signIn');
+export interface IAuth {
+  userId: string;
+  login: string;
+}
 
 export const signInSlice = createSlice({
   name: 'signIn',
   initialState: {
-    name: '' as string,
+    userId: '',
+    login: '',
   },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(signIn, (state, action) => {
-      state.name = action.payload;
-    });
+  reducers: {
+    setAuthData(state: IAuth, action: PayloadAction<IAuth>) {
+      state.login = action.payload.login;
+      state.userId = action.payload.userId;
+    },
   },
 });
-export const selectName = (state: RootState) => state.signIn.name;
+export const setAuthData = (userId: string, login: string) => async (dispatch: AppDispatch) => {
+  dispatch(signInSlice.actions.setAuthData({ userId, login }));
+};

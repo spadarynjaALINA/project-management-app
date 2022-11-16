@@ -1,6 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { Button, Form, Input } from 'antd';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import AuthService from '../../api-services/AuthService';
+
+interface IRegistrationData {
+  userName: string;
+  login: string;
+  password: string;
+  confirm?: string;
+}
 
 const formItemLayout = {
   labelCol: {
@@ -34,8 +42,18 @@ export const SignUp = () => {
   const confirmPassMsg = t('confirmPassMsg');
   const passMatchMsg = t('passMatchMsg');
   const nameMsg = t('nameMsg');
-  const onFinish = (values: {}) => {
-    console.log('Received values of form: ', values);
+
+  const onFinish = async (values: IRegistrationData) => {
+    const { userName, login, password } = values;
+    try {
+      await AuthService.registration(userName, login, password);
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data?.message);
+      } else {
+        console.log(e);
+      }
+    }
   };
 
   return (

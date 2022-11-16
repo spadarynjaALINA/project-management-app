@@ -2,13 +2,36 @@
 import './sign-in.less';
 import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
+import AuthService from '../../api-services/AuthService';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import { useAppDispatch } from '../../hooks';
+import { IAuth, setAuthData } from './signInSlice';
+
+interface IAuthorizationData {
+  login: string;
+  password: string;
+}
 
 export const SignIn = () => {
   const { t } = useTranslation();
   const loginMsg = t('loginMsg');
   const passMsg = t('passMsg');
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const dispatch = useAppDispatch();
+
+  const onFinish = async (values: IAuthorizationData) => {
+    try {
+      const response = await AuthService.authorization(values.login, values.password);
+      localStorage.setItem('token', response.data.token);
+      const { userId, login } = jwt_decode(response.data.token) as IAuth;
+      dispatch(setAuthData(userId, login));
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data?.message);
+      } else {
+        console.log(e);
+      }
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
