@@ -1,10 +1,12 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
+import { boards } from './components/boardComponent/boardSlice';
 import { columns } from './features/column/columnSlice';
 import { signInSlice } from './features/sign-in/signInSlice';
 
 const rootReducer = combineReducers({
   columns: columns.reducer,
   signIn: signInSlice.reducer,
+  boards: boards.reducer,
 });
 export const store = configureStore({
   reducer: rootReducer,

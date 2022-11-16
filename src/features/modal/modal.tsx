@@ -1,7 +1,8 @@
 import React from 'react';
 import './modal.less';
-import { message, Popconfirm } from 'antd';
-export const Modal = () => {
+import { Button, message, Popconfirm } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+export const Modal = (props: { props: string }) => {
   const confirm = (e: React.MouseEvent<HTMLElement> | undefined) => {
     console.log(e);
     message.success('Click on Yes');
@@ -13,13 +14,15 @@ export const Modal = () => {
   };
   return (
     <Popconfirm
-      title="Are you sure to delete this task?"
+      title={props.props}
       onConfirm={confirm}
       onCancel={cancel}
       okText="Yes"
       cancelText="No"
     >
-      <a href="#">Delete</a>
+      <Button type="text">
+        <DeleteOutlined />
+      </Button>
     </Popconfirm>
   );
 };

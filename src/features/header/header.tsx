@@ -9,6 +9,7 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
 import { useTranslation } from 'react-i18next';
+import { BoardModal } from '../../components/boardComponent/board-modal';
 export const HeaderLayout = () => {
   const { t } = useTranslation();
   const onSearch = (value: string) => console.log(value);
@@ -24,9 +25,6 @@ export const HeaderLayout = () => {
       key: '1',
     },
     {
-      type: 'divider',
-    },
-    {
       label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
       key: '3',
     },
@@ -40,9 +38,7 @@ export const HeaderLayout = () => {
           {t('home')}
         </Button>
         <PandaIcon style={{ fontSize: '32px' }} />
-        <Button type="primary" ghost>
-          {t('newBoard')} <PlusOutlined />
-        </Button>
+        <BoardModal props="header" data={{ title: '', description: '' }} />
         <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
         <div>
           <Button type="text" style={{ color: 'white' }}>
