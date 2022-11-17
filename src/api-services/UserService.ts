@@ -13,7 +13,12 @@ export default class UserService {
     return api.delete(`/users/${id}`);
   }
 
-  static updateUser(id: string, name: string, login: string, password: string): Promise<AxiosResponse<IUser>> {
+  static updateUser(
+    id: string,
+    name: string,
+    login: string,
+    password: string
+  ): Promise<AxiosResponse<IUser>> {
     return api.put<IUser>(`/users/${id}`, { name, login, password });
   }
 }

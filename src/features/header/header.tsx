@@ -1,7 +1,7 @@
 import { Avatar, Button, Divider, Switch } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
 import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
@@ -9,9 +9,19 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
 import { useTranslation } from 'react-i18next';
+
 import { BoardModal } from '../../components/boardComponent/board-modal';
+
+import { useAppSelector } from '../../hooks';
+import UserService from '../../api-services/UserService';
+import jwt_decode from 'jwt-decode';
+
 export const HeaderLayout = () => {
   const { t } = useTranslation();
+
+  const userId = useAppSelector((state) => state.signIn.userId);
+
+  const [userName, setUserName] = useState('');
   const onSearch = (value: string) => console.log(value);
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
@@ -29,7 +39,17 @@ export const HeaderLayout = () => {
       key: '3',
     },
   ];
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const fetchData = async () => {
+        const { userId } = jwt_decode(token) as { userId: string };
+        const response = await UserService.getUser(userId);
+        setUserName(response.data.name);
+      };
+      fetchData();
+    }
+  }, [userId]);
   return (
     <>
       <Header>
@@ -54,7 +74,7 @@ export const HeaderLayout = () => {
         <Dropdown menu={{ items }} trigger={['click']}>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              <Avatar size={48}>DOMINIKA</Avatar>
+              <Avatar size={48}>{userName}</Avatar>
               <DownOutlined />
             </Space>
           </a>
