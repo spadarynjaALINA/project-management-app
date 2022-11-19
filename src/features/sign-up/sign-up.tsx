@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import AuthService from '../../api-services/AuthService';
-
+import './sign-up.less';
 interface IRegistrationData {
   userName: string;
   login: string;
@@ -33,7 +33,6 @@ const tailFormItemLayout = {
     },
   },
 };
-import './sign-up.less';
 
 export const SignUp = () => {
   const [form] = Form.useForm();
@@ -59,7 +58,7 @@ export const SignUp = () => {
 
   return (
     <>
-      {localStorage.getItem('token') && <Navigate to="/main" replace={true} />}
+      {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
       <Form {...formItemLayout} form={form} name="register" onFinish={onFinish} scrollToFirstError>
         <Form.Item
           name="userName"

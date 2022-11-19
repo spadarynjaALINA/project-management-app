@@ -20,10 +20,10 @@ function App() {
         <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
           <Routes>
             <Route path="/" element={<Welcome />} />
-            <Route path="/login" element={<SignIn />} />
-            <Route path="/registration" element={<SignUp />} />
-            <Route path="/main" element={<Protected page={<Main />} />} />
-            <Route path="/board/:id" element={<Protected page={<Board />} />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/boards" element={<Protected page={<Main />} />} />
+            <Route path="/boards/:id" element={<Protected page={<Board />} />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

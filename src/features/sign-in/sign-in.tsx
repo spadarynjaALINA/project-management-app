@@ -27,7 +27,7 @@ export const SignIn = () => {
       localStorage.setItem('token', response.data.token);
       const { userId, login } = jwt_decode(response.data.token) as IAuth;
       dispatch(setAuthData(userId, login));
-      navigate('/main');
+      navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);
@@ -43,7 +43,7 @@ export const SignIn = () => {
 
   return (
     <>
-      {localStorage.getItem('token') && <Navigate to="/main" replace={true} />}
+      {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
       <Form
         name="basic"
         labelCol={{ span: 8 }}

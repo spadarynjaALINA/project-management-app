@@ -65,20 +65,20 @@ export const HeaderLayout = () => {
           <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
         )}
         {isAuth ? (
-          <NavLink to="/main">
+          <NavLink to="/boards">
             <Button type="text" style={{ color: 'white' }}>
               {t('mainPage')}
             </Button>
           </NavLink>
         ) : (
           <div>
-            <NavLink to="/registration">
+            <NavLink to="/signup">
               <Button type="text" style={{ color: 'white' }}>
                 {t('signUp')}
               </Button>
             </NavLink>
             <Divider type="vertical" style={{ background: 'white' }} />
-            <NavLink to="/login">
+            <NavLink to="/signin">
               <Button type="text" style={{ color: 'white' }}>
                 {t('signIn')}
               </Button>
