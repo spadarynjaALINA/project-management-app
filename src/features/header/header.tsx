@@ -4,17 +4,16 @@ import { Header } from 'antd/lib/layout/layout';
 import React, { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
 import { useTranslation } from 'react-i18next';
-
 import { BoardModal } from '../../components/boardComponent/board-modal';
-
 import { useAppSelector } from '../../hooks';
 import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
+import { NavLink } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
@@ -50,35 +49,53 @@ export const HeaderLayout = () => {
       fetchData();
     }
   }, [userId]);
+  const isAuth = localStorage.getItem('token');
   return (
     <>
       <Header>
-        <Button type="primary">
-          <ArrowLeftOutlined />
-          {t('home')}
-        </Button>
+        <NavLink to="/">
+          <Button type="primary">
+            <ArrowLeftOutlined />
+            {t('home')}
+          </Button>
+        </NavLink>
         <PandaIcon style={{ fontSize: '32px' }} />
-        <BoardModal props="header" data={{ title: '', description: '' }} />
-        <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
-        <div>
-          <Button type="text" style={{ color: 'white' }}>
-            {t('signUp')}
-          </Button>
-          <Divider type="vertical" style={{ background: 'white' }} />
-          <Button type="text" style={{ color: 'white' }}>
-            {t('signIn')}
-          </Button>
-        </div>
-
+        {isAuth && <BoardModal props="header" data={{ title: '', description: '' }} />}
+        {isAuth && (
+          <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
+        )}
+        {isAuth ? (
+          <NavLink to="/main">
+            <Button type="text" style={{ color: 'white' }}>
+              {t('mainPage')}
+            </Button>
+          </NavLink>
+        ) : (
+          <div>
+            <NavLink to="/registration">
+              <Button type="text" style={{ color: 'white' }}>
+                {t('signUp')}
+              </Button>
+            </NavLink>
+            <Divider type="vertical" style={{ background: 'white' }} />
+            <NavLink to="/login">
+              <Button type="text" style={{ color: 'white' }}>
+                {t('signIn')}
+              </Button>
+            </NavLink>
+          </div>
+        )}
         <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              <Avatar size={48}>{userName}</Avatar>
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown>
+        {isAuth && (
+          <Dropdown menu={{ items }} trigger={['click']}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                <Avatar size={48}>{userName}</Avatar>
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
+        )}
       </Header>
     </>
   );

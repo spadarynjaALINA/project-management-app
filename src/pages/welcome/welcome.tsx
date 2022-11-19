@@ -1,3 +1,3 @@
 import React from 'react';
-import './welcome.scss';
-export const Welcome = () => <div >Welcome</div>;
+import './welcome.less';
+export const Welcome = () => <div>Welcome</div>;

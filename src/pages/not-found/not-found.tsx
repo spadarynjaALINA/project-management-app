@@ -1,4 +1,6 @@
 import React from 'react';
-import './not-found.scss';
+import './not-found.less';
 
-export const NotFound = () => <div >Not found</div>;
+export const NotFound = () => {
+  return <div>Not found</div>;
+};
