@@ -60,12 +60,11 @@ export const SignIn = () => {
         <Input.Password />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary">{t('cancel')}</Button>
+        <Button type="primary" htmlType="submit" loading>
           {t('submit')}
         </Button>
-        <Button type="primary" loading>
-          {t('submitting')}
-        </Button>
+        Or <a href="">register now!</a>
       </Form.Item>
     </Form>
   );

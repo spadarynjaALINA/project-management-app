@@ -1,10 +1,9 @@
 import { Avatar, Button, Divider, Switch } from 'antd';
-import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
@@ -15,6 +14,7 @@ import { BoardModal } from '../../components/boardComponent/board-modal';
 import { useAppSelector } from '../../hooks';
 import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
+import { SearchResults } from '../searchResults/searchResults';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ export const HeaderLayout = () => {
   const userId = useAppSelector((state) => state.signIn.userId);
 
   const [userName, setUserName] = useState('');
-  const onSearch = (value: string) => console.log(value);
+
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
   const items: MenuProps['items'] = [
@@ -59,7 +59,7 @@ export const HeaderLayout = () => {
         </Button>
         <PandaIcon style={{ fontSize: '32px' }} />
         <BoardModal props="header" data={{ title: '', description: '' }} />
-        <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
+        <SearchResults />
         <div>
           <Button type="text" style={{ color: 'white' }}>
             {t('signUp')}
@@ -69,10 +69,9 @@ export const HeaderLayout = () => {
             {t('signIn')}
           </Button>
         </div>
-
         <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
         <Dropdown menu={{ items }} trigger={['click']}>
-          <a onClick={(e) => e.preventDefault()}>
+          <a className="userMenu" onClick={(e) => e.preventDefault()}>
             <Space>
               <Avatar size={48}>{userName}</Avatar>
               <DownOutlined />
