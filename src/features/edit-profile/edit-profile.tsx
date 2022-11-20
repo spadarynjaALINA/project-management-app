@@ -2,13 +2,7 @@ import { Button, Form, Input } from 'antd';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import AuthService from '../../api-services/AuthService';
-
-export interface IRegistrationData {
-  userName: string;
-  login: string;
-  password: string;
-  confirm?: string;
-}
+import { IRegistrationData } from '../sign-up/sign-up';
 
 const formItemLayout = {
   labelCol: {
@@ -32,28 +26,17 @@ const tailFormItemLayout = {
     },
   },
 };
-import './sign-up.less';
 
 export const SignUp = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const loginMsg = t('loginMsg');
   const passMsg = t('passMsg');
-  const confirmPassMsg = t('confirmPassMsg');
   const passMatchMsg = t('passMatchMsg');
   const nameMsg = t('nameMsg');
 
   const onFinish = async (values: IRegistrationData) => {
-    const { userName, login, password } = values;
-    try {
-      await AuthService.registration(userName, login, password);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
-      } else {
-        console.log(e);
-      }
-    }
+    console.log(values);
   };
 
   return (
@@ -86,30 +69,6 @@ export const SignUp = () => {
       >
         <Input.Password />
       </Form.Item>
-
-      <Form.Item
-        name="confirm"
-        label={t('confirmPassword')}
-        dependencies={['password']}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: confirmPassMsg,
-          },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(passMatchMsg));
-            },
-          }),
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
-
       <Form.Item {...tailFormItemLayout}>
         <Button type="primary">{t('cancel')}</Button>
         <Button type="primary" htmlType="submit" loading>

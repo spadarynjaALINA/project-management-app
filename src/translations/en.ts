@@ -6,6 +6,7 @@ export const TRANSLATIONS_EN = {
   signIn: 'Sign in',
   signUp: 'Sign up',
   signOut: 'Sign out',
+  cancel: 'Cancel',
   profile: 'Profile',
   tasks: 'Tasks',
   submit: 'Submit',
