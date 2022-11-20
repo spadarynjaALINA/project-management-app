@@ -1,6 +1,7 @@
 export const TRANSLATIONS_EN = {
   welcome: 'Welcome',
   home: 'Home',
+  mainPage: 'Go to Main page',
   newBoard: 'New board',
   searchTasks: 'search tasks',
   signIn: 'Sign in',
