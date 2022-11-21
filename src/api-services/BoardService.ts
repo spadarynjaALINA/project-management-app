@@ -16,7 +16,11 @@ export default class BoardService {
     return api.delete(`/boards/${id}`);
   }
 
-  static updateBoard(id: string, title: string, description: string): Promise<AxiosResponse<IBoard>> {
+  static updateBoard(
+    id: string,
+    title: string,
+    description: string
+  ): Promise<AxiosResponse<IBoard>> {
     return api.put<IBoard>(`/boards/${id}`, { title, description });
   }
 }
