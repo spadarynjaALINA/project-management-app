@@ -91,6 +91,7 @@ export const HeaderLayout = () => {
             </CustomModal>
           </>
         )}
+
         {isAuth && (
           <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
         )}
