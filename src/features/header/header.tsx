@@ -78,7 +78,7 @@ export const HeaderLayout = () => {
         <Button onClick={showModal} type="primary" ghost>
           {t('newBoard')} <PlusOutlined />
         </Button>
-        <CustomModal open={open} cancel={handleCancel}>
+        <CustomModal open={open} cancel={handleCancel} footer={false}>
           <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
         </CustomModal>
         <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />

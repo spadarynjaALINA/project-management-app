@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
@@ -9,7 +9,8 @@ export const CustomModal: React.FC<{
   open: boolean;
   cancel: () => void;
   children: JSX.Element;
-}> = (props: { open: boolean; cancel: () => void; children: JSX.Element }) => {
+  footer: boolean;
+}> = (props: { open: boolean; cancel: () => void; children: JSX.Element; footer: boolean }) => {
   const [disabled, setDisabled] = useState(false);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
@@ -52,7 +53,19 @@ export const CustomModal: React.FC<{
         </div>
       }
       open={props.open}
-      footer={false}
+      footer={
+        props.footer
+          ? [
+              <Button key="back" onClick={props.cancel}>
+                Back
+              </Button>,
+              <Button key="yes" type="primary" onClick={props.cancel}>
+                Ok
+              </Button>,
+            ]
+          : false
+      }
+      onOk={props.cancel}
       onCancel={props.cancel}
       modalRender={(modal) => (
         <Draggable

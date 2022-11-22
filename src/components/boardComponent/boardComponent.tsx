@@ -1,5 +1,5 @@
-import { Button, Card } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Card, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
@@ -14,9 +14,12 @@ export const BoardComponent = (props: {
     dispatch({ type: 'currentBoardId', payload: props.props.boardId });
   };
   const [open, setOpen] = useState(false);
-
+  const [openConfirm, setOpenConfirm] = useState(false);
   const handleCancel = () => {
     setOpen(false);
+  };
+  const closeConfirm = () => {
+    setOpenConfirm(false);
   };
 
   const showModal = () => {
@@ -28,8 +31,11 @@ export const BoardComponent = (props: {
         data: { title: props.props.title, description: props.props.description },
       },
     });
-    console.log(data, 'props->', props);
   };
+  const showConfirm = () => {
+    setOpenConfirm(true);
+  };
+
   return (
     <Card
       onClick={handleClick}
@@ -39,17 +45,18 @@ export const BoardComponent = (props: {
         <Button key={'1'} onClick={showModal} type="text">
           <EditOutlined />
         </Button>,
-        <CustomModal key={'2'} open={open} cancel={handleCancel}>
+        <CustomModal key={'2'} open={open} cancel={handleCancel} footer={false}>
           <CreateBoardForm
             cancel={handleCancel}
             data={{ title: props.props.title, description: props.props.description }}
           />
         </CustomModal>,
-        // <BoardModal
-        //   key="ed"
-        //   props="board"
-        //   data={{ title: props.props.title, description: props.props.description }}
-        // />,
+        <Button key={'3'} onClick={showConfirm} type="text">
+          <DeleteOutlined />
+        </Button>,
+        <CustomModal key={'4'} open={openConfirm} cancel={closeConfirm} footer={true}>
+          <p></p>
+        </CustomModal>,
       ]}
       style={{ width: 250 }}
     >
