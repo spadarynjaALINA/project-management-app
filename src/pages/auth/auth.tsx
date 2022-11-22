@@ -1,3 +1,3 @@
 import React from 'react';
-import './auth.scss';
+import './auth.less';
 export const Auth = () => <div>Auth</div>;

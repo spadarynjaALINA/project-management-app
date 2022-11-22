@@ -7,6 +7,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useAppDispatch } from '../../hooks';
 import { IAuth, setAuthData } from './signInSlice';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface IAuthorizationData {
   login: string;
@@ -18,6 +19,7 @@ export const SignIn = () => {
   const loginMsg = t('loginMsg');
   const passMsg = t('passMsg');
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const onFinish = async (values: IAuthorizationData) => {
     try {
@@ -25,6 +27,7 @@ export const SignIn = () => {
       localStorage.setItem('token', response.data.token);
       const { userId, login } = jwt_decode(response.data.token) as IAuth;
       dispatch(setAuthData(userId, login));
+      navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);
@@ -39,34 +42,37 @@ export const SignIn = () => {
   };
 
   return (
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item label={t('login')} name="login" rules={[{ required: true, message: loginMsg }]}>
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={t('password')}
-        name="password"
-        rules={[{ required: true, message: passMsg }]}
+    <>
+      {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
       >
-        <Input.Password />
-      </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
-          {t('submit')}
-        </Button>
-        <Button type="primary" loading>
-          {t('submitting')}
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item label={t('login')} name="login" rules={[{ required: true, message: loginMsg }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label={t('password')}
+          name="password"
+          rules={[{ required: true, message: passMsg }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            {t('submit')}
+          </Button>
+          <Button type="primary" loading>
+            {t('submitting')}
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 };
