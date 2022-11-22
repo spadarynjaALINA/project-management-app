@@ -18,16 +18,13 @@ export const CreateBoardForm = (props: {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
-  console.log(props.data, '<-from form');
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
     try {
       if (!!Object.values(data.data).filter((elem) => elem !== '').length) {
         const response = await BoardService.updateBoard(boardId, values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
-        console.log('update board');
       } else {
-        console.log('create board');
         const response = await BoardService.createBoard(values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
       }

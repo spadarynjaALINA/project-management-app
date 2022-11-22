@@ -1,7 +1,7 @@
-import { Avatar, Button, Divider, Modal, Switch } from 'antd';
+import { Avatar, Button, Divider, Switch } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
 import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
@@ -78,7 +78,7 @@ export const HeaderLayout = () => {
         <Button onClick={showModal} type="primary" ghost>
           {t('newBoard')} <PlusOutlined />
         </Button>
-        <CustomModal open={open} cancel={handleCancel} footer={false}>
+        <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
           <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
         </CustomModal>
         <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />

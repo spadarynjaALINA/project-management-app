@@ -22,7 +22,6 @@ export const boards = createSlice({
     builder.addCase(newBoardList, (state, action) => {
       state.boardsList = action.payload;
     });
-
     builder.addCase(boardModalDataAction, (state, action) => {
       state.boardModalData = action.payload;
     });

@@ -1,15 +1,14 @@
-import { Button, Card, Popconfirm } from 'antd';
+import { Button, Card } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
 import { useState } from 'react';
-import { selectCurrentData } from './boardSlice';
+
 export const BoardComponent = (props: {
   props: { boardId: string; title: string; description: string };
 }) => {
   const dispatch = useAppDispatch();
-  const data = useAppSelector(selectCurrentData);
   const handleClick = () => {
     dispatch({ type: 'currentBoardId', payload: props.props.boardId });
   };
@@ -45,7 +44,13 @@ export const BoardComponent = (props: {
         <Button key={'1'} onClick={showModal} type="text">
           <EditOutlined />
         </Button>,
-        <CustomModal key={'2'} open={open} cancel={handleCancel} footer={false}>
+        <CustomModal
+          key={'2'}
+          open={open}
+          cancel={handleCancel}
+          footer={false}
+          title={'Edit board'}
+        >
           <CreateBoardForm
             cancel={handleCancel}
             data={{ title: props.props.title, description: props.props.description }}
@@ -54,8 +59,14 @@ export const BoardComponent = (props: {
         <Button key={'3'} onClick={showConfirm} type="text">
           <DeleteOutlined />
         </Button>,
-        <CustomModal key={'4'} open={openConfirm} cancel={closeConfirm} footer={true}>
-          <p></p>
+        <CustomModal
+          key={'4'}
+          open={openConfirm}
+          cancel={closeConfirm}
+          footer={true}
+          title={'Delete board'}
+        >
+          <p>Are you really want to delete this board?</p>
         </CustomModal>,
       ]}
       style={{ width: 250 }}
