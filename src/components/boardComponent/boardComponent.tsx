@@ -1,19 +1,73 @@
-import { Card } from 'antd';
-import { BoardModal } from './board-modal';
-import { Modal } from '../../features/modal/modal';
+import { Button, Card } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useAppDispatch } from '../../hooks';
-export const BoardComponent = (props: { props: { title: string; description: string } }) => {
+import { CustomModal } from '../../features/modal/modal';
+import { CreateBoardForm } from '../createBoard';
+import { useState } from 'react';
+
+export const BoardComponent = (props: {
+  props: { boardId: string; title: string; description: string };
+}) => {
+  const dispatch = useAppDispatch();
+  const handleClick = () => {
+    dispatch({ type: 'currentBoardId', payload: props.props.boardId });
+  };
+  const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const closeConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const showModal = () => {
+    setOpen(true);
+    dispatch({
+      type: 'currentData',
+      payload: {
+        props: 'board',
+        data: { title: props.props.title, description: props.props.description },
+      },
+    });
+  };
+  const showConfirm = () => {
+    setOpenConfirm(true);
+  };
+
   return (
     <Card
+      onClick={handleClick}
       title={props.props.title || ''}
       bordered={false}
       extra={[
-        <BoardModal
-          key="ed"
-          props="board"
-          data={{ title: props.props.title, description: props.props.description }}
-        />,
-        <Modal key="del" props=" Are you really want to delete this board?" />,
+        <Button key={'1'} onClick={showModal} type="text">
+          <EditOutlined />
+        </Button>,
+        <CustomModal
+          key={'2'}
+          open={open}
+          cancel={handleCancel}
+          footer={false}
+          title={'Edit board'}
+        >
+          <CreateBoardForm
+            cancel={handleCancel}
+            data={{ title: props.props.title, description: props.props.description }}
+          />
+        </CustomModal>,
+        <Button key={'3'} onClick={showConfirm} type="text">
+          <DeleteOutlined />
+        </Button>,
+        <CustomModal
+          key={'4'}
+          open={openConfirm}
+          cancel={closeConfirm}
+          footer={true}
+          title={'Delete board'}
+        >
+          <p>Are you really want to delete this board?</p>
+        </CustomModal>,
       ]}
       style={{ width: 250 }}
     >
