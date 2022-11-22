@@ -1,4 +1,5 @@
 import { Button, Modal } from 'antd';
+import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
@@ -41,8 +42,17 @@ export const CustomModal: React.FC<{
   const deleteItem = async () => {
     switch (props.title) {
       case 'Delete board':
-        const response = await BoardService.deleteBoard(boardId);
-        dispatch({ type: 'boardModalDataAction', payload: response.data });
+        try {
+          await BoardService.deleteBoard(boardId);
+          const response = await BoardService.getBoards();
+          dispatch({ type: 'newBoardList', payload: response.data });
+        } catch (e) {
+          if (axios.isAxiosError(e)) {
+            console.log(e.response?.data?.message);
+          } else {
+            console.log(e);
+          }
+        }
         break;
       default:
         break;
