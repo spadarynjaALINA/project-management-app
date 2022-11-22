@@ -14,6 +14,7 @@ import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
 import { CreateBoardForm } from '../../components/createBoard';
 import { CustomModal } from '../modal/modal';
+import { NavLink } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
@@ -67,40 +68,64 @@ export const HeaderLayout = () => {
     }
   }, [userId]);
 
+  const isAuth = localStorage.getItem('token');
+
   return (
     <>
       <Header>
-        <Button type="primary">
-          <ArrowLeftOutlined />
-          {t('home')}
-        </Button>
+        <NavLink to="/">
+          <Button type="primary">
+            <ArrowLeftOutlined />
+            {t('home')}
+          </Button>
+        </NavLink>
         <PandaIcon style={{ fontSize: '32px' }} />
-        <Button onClick={showModal} type="primary" ghost>
-          {t('newBoard')} <PlusOutlined />
-        </Button>
-        <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
-          <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
-        </CustomModal>
-        <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
-        <div>
-          <Button type="text" style={{ color: 'white' }}>
-            {t('signUp')}
-          </Button>
-          <Divider type="vertical" style={{ background: 'white' }} />
-          <Button type="text" style={{ color: 'white' }}>
-            {t('signIn')}
-          </Button>
-        </div>
 
+        {isAuth && (
+          <>
+            <Button onClick={showModal} type="primary" ghost>
+              {t('newBoard')} <PlusOutlined />
+            </Button>
+            <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+              <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+            </CustomModal>
+          </>
+        )}
+        {isAuth && (
+          <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
+        )}
+        {isAuth ? (
+          <NavLink to="/boards">
+            <Button type="text" style={{ color: 'white' }}>
+              {t('mainPage')}
+            </Button>
+          </NavLink>
+        ) : (
+          <div>
+            <NavLink to="/signup">
+              <Button type="text" style={{ color: 'white' }}>
+                {t('signUp')}
+              </Button>
+            </NavLink>
+            <Divider type="vertical" style={{ background: 'white' }} />
+            <NavLink to="/signin">
+              <Button type="text" style={{ color: 'white' }}>
+                {t('signIn')}
+              </Button>
+            </NavLink>
+          </div>
+        )}
         <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              <Avatar size={48}>{userName}</Avatar>
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown>
+        {isAuth && (
+          <Dropdown menu={{ items }} trigger={['click']}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                <Avatar size={48}>{userName}</Avatar>
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
+        )}
       </Header>
     </>
   );

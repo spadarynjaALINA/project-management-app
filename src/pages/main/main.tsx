@@ -44,7 +44,6 @@ export const Main = () => {
   };
   return (
     <div className="main-wrap">
-      Main page
       <Button onClick={showModal} className="new-board-btn">
         {t('newBoard')}
         <PlusOutlined />
