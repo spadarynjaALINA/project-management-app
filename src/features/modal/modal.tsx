@@ -1,36 +1,70 @@
-import React from 'react';
-import './modal.less';
-import { Button, message, Popconfirm } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
-import BoardService from '../../api-services/BoardService';
-import { useAppDispatch } from '../../hooks';
-export const Modal = (props: { props: { message: string; boardId: string } }) => {
-  const dispatch = useAppDispatch();
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Modal } from 'antd';
+import React, { useRef, useState } from 'react';
+import type { DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 
-  const confirm = async (e: React.MouseEvent<HTMLElement> | undefined) => {
-    await BoardService.deleteBoard(props.props.boardId);
-    const response = await BoardService.getBoards();
-    dispatch({ type: 'newBoardList', payload: response.data });
+export const CustomModal: React.FC<{
+  open: boolean;
+  cancel: () => void;
+  children: JSX.Element;
+}> = (props: { open: boolean; cancel: () => void; children: JSX.Element }) => {
+  const [disabled, setDisabled] = useState(false);
+  const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
+  const draggleRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
-    message.success('Click on Yes');
-  };
-
-  const cancel = (e: React.MouseEvent<HTMLElement> | undefined) => {
-    console.log(e);
-    message.error('Click on No');
+  const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
+    const { clientWidth, clientHeight } = window.document.documentElement;
+    const targetRect = draggleRef.current?.getBoundingClientRect();
+    if (!targetRect) {
+      return;
+    }
+    setBounds({
+      left: -targetRect.left + uiData.x,
+      right: clientWidth - (targetRect.right - uiData.x),
+      top: -targetRect.top + uiData.y,
+      bottom: clientHeight - (targetRect.bottom - uiData.y),
+    });
   };
 
   return (
-    <Popconfirm
-      title={props.props.message}
-      onConfirm={confirm}
-      onCancel={cancel}
-      okText="Yes"
-      cancelText="No"
+    <Modal
+      title={
+        <div
+          style={{
+            width: '100%',
+            cursor: 'move',
+          }}
+          onMouseOver={() => {
+            if (disabled) {
+              setDisabled(false);
+            }
+          }}
+          onMouseOut={() => {
+            setDisabled(true);
+          }}
+          onFocus={() => {}}
+          onBlur={() => {}}
+        >
+          {t('newBoard')}
+        </div>
+      }
+      open={props.open}
+      footer={false}
+      onCancel={props.cancel}
+      modalRender={(modal) => (
+        <Draggable
+          disabled={disabled}
+          bounds={bounds}
+          onStart={(event: DraggableEvent, uiData: DraggableData) => onStart(event, uiData)}
+        >
+          <div ref={draggleRef}>{modal}</div>
+        </Draggable>
+      )}
     >
-      <Button type="text">
-        <DeleteOutlined />
-      </Button>
-    </Popconfirm>
+      {props.children}
+    </Modal>
   );
 };

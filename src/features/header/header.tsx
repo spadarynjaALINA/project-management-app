@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Switch } from 'antd';
+import { Avatar, Button, Divider, Modal, Switch } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
 import React, { useEffect, useState } from 'react';
@@ -9,22 +9,37 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
 import { useTranslation } from 'react-i18next';
-
-import { BoardModal } from '../../components/boardComponent/board-modal';
-
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
+import { CreateBoardForm } from '../../components/createBoard';
+import { CustomModal } from '../modal/modal';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
 
   const userId = useAppSelector((state) => state.signIn.userId);
-
+  const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
+  const [open, setOpen] = useState(false);
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const showModal = () => {
+    setOpen(true);
+    dispatch({
+      type: 'currentData',
+      payload: { props: 'board', data: { title: '', description: '' } },
+    });
+  };
+
   const onSearch = (value: string) => console.log(value);
+
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
+
   const items: MenuProps['items'] = [
     {
       label: <a href="https://www.antgroup.com">{t('signOut')}</a>,
@@ -39,6 +54,7 @@ export const HeaderLayout = () => {
       key: '3',
     },
   ];
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -50,6 +66,7 @@ export const HeaderLayout = () => {
       fetchData();
     }
   }, [userId]);
+
   return (
     <>
       <Header>
@@ -58,7 +75,12 @@ export const HeaderLayout = () => {
           {t('home')}
         </Button>
         <PandaIcon style={{ fontSize: '32px' }} />
-        <BoardModal props="header" data={{ title: '', description: '' }} />
+        <Button onClick={showModal} type="primary" ghost>
+          {t('newBoard')} <PlusOutlined />
+        </Button>
+        <CustomModal open={open} cancel={handleCancel}>
+          <CreateBoardForm cancel={handleCancel} />
+        </CustomModal>
         <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
         <div>
           <Button type="text" style={{ color: 'white' }}>

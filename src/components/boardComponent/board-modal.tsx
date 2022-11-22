@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Modal, Checkbox, Form, Input } from 'antd';
+import { Button, Modal, Form, Input } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
-
 import { EditOutlined } from '@ant-design/icons';
 import Draggable from 'react-draggable';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { selectCurrentBoardId, selectCurrentData, selectIsBoardModal } from './boardSlice';
+import { selectCurrentBoardId, selectCurrentData } from './boardSlice';
 import { useTranslation } from 'react-i18next';
 import './boardComponent.less';
 import BoardService from '../../api-services/BoardService';
@@ -18,7 +17,6 @@ export const BoardModal: React.FC<{
   props: string;
   data: { title: string; description: string };
 }> = (props: { props: string; data?: { title: string; description: string } }) => {
-  const open = useAppSelector(selectIsBoardModal);
   const boardId = useAppSelector(selectCurrentBoardId);
   const data = useAppSelector(selectCurrentData);
   const dispatch = useAppDispatch();
@@ -121,7 +119,7 @@ export const BoardModal: React.FC<{
             {t('newBoard')}
           </div>
         }
-        open={open}
+        // open={open}
         footer={false}
         onCancel={handleCancel}
         confirmLoading={confirmLoading}

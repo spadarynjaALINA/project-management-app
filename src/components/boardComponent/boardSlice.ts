@@ -4,7 +4,6 @@ import { IBoardDispatch } from '../../interfaces/interfaces';
 import { RootState } from '../../store';
 
 const newBoardList = createAction<IBoard[]>('newBoardList');
-const isBoardModalAction = createAction<boolean>('isBoardModalAction');
 const boardModalDataAction = createAction<IBoardDispatch>('boardModalDataAction');
 const currentBoardId = createAction<string>('currentBoardId');
 const currentData = createAction<{ props: string; data: IBoardDispatch }>('currentData');
@@ -23,9 +22,7 @@ export const boards = createSlice({
     builder.addCase(newBoardList, (state, action) => {
       state.boardsList = action.payload;
     });
-    builder.addCase(isBoardModalAction, (state, action) => {
-      state.isBoardModal = action.payload;
-    });
+
     builder.addCase(boardModalDataAction, (state, action) => {
       state.boardModalData = action.payload;
     });
@@ -38,7 +35,6 @@ export const boards = createSlice({
   },
 });
 export const selectBoardList = (state: RootState) => state.boards.boardsList;
-export const selectIsBoardModal = (state: RootState) => state.boards.isBoardModal;
 export const selectBoardModalData = (state: RootState) => state.boards.boardModalData;
 export const selectCurrentBoardId = (state: RootState) => state.boards.boardId;
 export const selectCurrentData = (state: RootState) => state.boards.currentData;
