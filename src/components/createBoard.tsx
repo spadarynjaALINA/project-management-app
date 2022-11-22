@@ -47,10 +47,13 @@ export const CreateBoardForm = (props: {
       name="basic"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      initialValues={{ title: props.data.title, description: props.data.description }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="on"
+      fields={[
+        { name: ['title'], value: props.data.title },
+        { name: ['description'], value: props.data.description },
+      ]}
     >
       <Form.Item label={t('title')} name="title" rules={[{ required: true, message: titleMsg }]}>
         <Input />
