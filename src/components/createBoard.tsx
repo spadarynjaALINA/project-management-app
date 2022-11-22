@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, Button } from 'antd';
 import axios from 'axios';
+import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BoardService from '../api-services/BoardService';
 import { IBoard } from '../api-services/types/types';
 import { useAppSelector, useAppDispatch } from '../hooks';
-import {
-  selectBoardModalData,
-  selectCurrentBoardId,
-  selectCurrentData,
-} from './boardComponent/boardSlice';
+import { selectCurrentBoardId, selectCurrentData } from './boardComponent/boardSlice';
 
-export const CreateBoardForm = (props: { cancel: () => void }) => {
+export const CreateBoardForm = (props: {
+  cancel: () => void;
+  data: { title: string; description: string };
+}) => {
   const boardId = useAppSelector(selectCurrentBoardId);
   const data = useAppSelector(selectCurrentData);
   const dispatch = useAppDispatch();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
-
+  console.log(props.data, '<-from form');
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
     try {
@@ -39,11 +38,11 @@ export const CreateBoardForm = (props: { cancel: () => void }) => {
         console.log(e);
       }
     } finally {
-      setConfirmLoading(false); // moved here
+      setConfirmLoading(false);
       props.cancel();
     }
   };
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: ValidateErrorEntity<IBoard>) => {
     console.log('Failed:', errorInfo);
   };
   return (
@@ -51,16 +50,16 @@ export const CreateBoardForm = (props: { cancel: () => void }) => {
       name="basic"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
+      initialValues={{ title: props.data.title, description: props.data.description }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="on"
     >
       <Form.Item label={t('title')} name="title" rules={[{ required: true, message: titleMsg }]}>
-        <Input value={data.data.title} />
+        <Input />
       </Form.Item>
       <Form.Item label={t('description')} name="description">
-        <Input value={data.data.description} />
+        <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button className="back" onClick={props.cancel}>
