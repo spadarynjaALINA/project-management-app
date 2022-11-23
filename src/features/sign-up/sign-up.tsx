@@ -63,14 +63,29 @@ export const SignUp = () => {
         <Form.Item
           name="userName"
           label={t('name')}
-          rules={[{ required: true, message: nameMsg, whitespace: true }]}
+          rules={[
+            { required: true, message: nameMsg, whitespace: true },
+            {
+              pattern: /^[a-zA-Z ]{2,}$/,
+              message: 'The name must be at least 2 characters and contain only letters',
+            },
+          ]}
+          hasFeedback
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="login"
           label={t('login')}
-          rules={[{ required: true, message: loginMsg, whitespace: true }]}
+          rules={[
+            { required: true, message: loginMsg, whitespace: true },
+            {
+              pattern: /^[A-Za-z\d]{5,}$/,
+              message:
+                'The login must be at least 5 characters and contain only letters and numbers',
+            },
+          ]}
+          hasFeedback
         >
           <Input />
         </Form.Item>
@@ -79,9 +94,11 @@ export const SignUp = () => {
           name="password"
           label={t('password')}
           rules={[
+            { required: true, message: passMsg },
             {
-              required: true,
-              message: passMsg,
+              pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
+              message:
+                'The password must be 8-12 characters and contain at least one letter and one number',
             },
           ]}
           hasFeedback
