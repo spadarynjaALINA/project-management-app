@@ -58,11 +58,11 @@ export const Board = () => {
   };
   return (
     <div className="columns-wrap">
+      <Button onClick={showModal} className="new-column-btn">
+        {t('newColumn')}
+        <PlusOutlined />
+      </Button>
       <div className="inner-wrap">
-        <Button onClick={showModal} className="new-column-btn">
-          {t('newColumn')}
-          <PlusOutlined />
-        </Button>
         <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Column'}>
           <CreateColumnForm cancel={handleCancel} data={{ title: '' }} />
         </CustomModal>

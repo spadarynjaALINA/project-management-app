@@ -1,7 +1,22 @@
 @import './../../assets/less/variables.less';
 
 .column {
+	height: fit-content;
+	width: fit-content;
+	overflow-y: auto;
+
 	.ant-card-body {
-    padding: 10px;
+    padding: 60px 10px 10px;
+				max-height: 56vh;
+					overflow-y: auto;
+					 &::-webkit-scrollbar {
+    width: 4px;
+    background-color: @bg-gray;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: @gray;
+    border-radius: 2px;
+  }
 }
+
 }

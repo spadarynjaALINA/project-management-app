@@ -18,7 +18,7 @@ function App() {
     <Layout style={{ minHeight: '100vh' }}>
       <HeaderLayout />
       <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
-        <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />

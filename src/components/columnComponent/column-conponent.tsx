@@ -32,13 +32,27 @@ export const ColumnComponent = (props: { props: { columnId: string; title: strin
       title={props.props.title}
       bordered={false}
       extra={[<EditOutlined key="ed" />]}
-      style={{ width: 250 }}
+      style={{ maxHeight: '70vh' }}
+      actions={[
+        <Button key={'new'} onClick={showModal} type="primary" ghost>
+          {t('newTask')} <PlusOutlined />
+        </Button>,
+      ]}
     >
-      <Task description={'task1'} />
-      <Task description={'task2'} />
-      <Button onClick={showModal} type="primary" ghost>
-        {t('newTask')} <PlusOutlined />
-      </Button>
+      <div className="tasks-wrap">
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+        <Task description={'task1'} />
+        <Task description={'task2'} />
+      </div>
     </Card>
   );
 };
