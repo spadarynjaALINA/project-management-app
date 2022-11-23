@@ -1,4 +1,11 @@
 import React from 'react';
+import { ColumnComponent } from '../../components/columnComponent/column-conponent';
 import './column.less';
 
-export const Column = () => <div>Column</div>;
+export const Column = () => {
+  return (
+    <div className="columns-wrap">
+      <div className="inner-wrap"></div>
+    </div>
+  );
+};

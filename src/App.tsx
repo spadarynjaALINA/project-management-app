@@ -11,6 +11,7 @@ import { NotFound } from './pages/not-found/not-found';
 import { Route, Routes } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { Protected } from './Protected';
+import { Profile } from './pages/profile/profile';
 const { Content } = Layout;
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/boards" element={<Protected page={<Main />} />} />
             <Route path="/boards/:id" element={<Protected page={<Board />} />} />
             <Route path="*" element={<NotFound />} />
