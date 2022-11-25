@@ -1,4 +1,4 @@
-export interface IBoard {
+export interface IBoardDispatch {
   title: string;
   description: string;
 }

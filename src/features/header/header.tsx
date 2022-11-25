@@ -1,29 +1,46 @@
 import { Avatar, Button, Divider, Switch } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
 import { useTranslation } from 'react-i18next';
-import { BoardModal } from '../../components/boardComponent/board-modal';
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
+import { CreateBoardForm } from '../../components/createBoard';
+import { CustomModal } from '../modal/modal';
 import { NavLink } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
 
   const userId = useAppSelector((state) => state.signIn.userId);
-
+  const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
+  const [open, setOpen] = useState(false);
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const showModal = () => {
+    setOpen(true);
+    dispatch({
+      type: 'currentData',
+      payload: { props: 'board', data: { title: '', description: '' } },
+    });
+  };
+
   const onSearch = (value: string) => console.log(value);
+
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
+
   const items: MenuProps['items'] = [
     {
       label: <a href="https://www.antgroup.com">{t('signOut')}</a>,
@@ -38,6 +55,7 @@ export const HeaderLayout = () => {
       key: '3',
     },
   ];
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -49,7 +67,9 @@ export const HeaderLayout = () => {
       fetchData();
     }
   }, [userId]);
+
   const isAuth = localStorage.getItem('token');
+
   return (
     <>
       <Header>
@@ -60,7 +80,18 @@ export const HeaderLayout = () => {
           </Button>
         </NavLink>
         <PandaIcon style={{ fontSize: '32px' }} />
-        {isAuth && <BoardModal props="header" data={{ title: '', description: '' }} />}
+
+        {isAuth && (
+          <>
+            <Button onClick={showModal} type="primary" ghost>
+              {t('newBoard')} <PlusOutlined />
+            </Button>
+            <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+              <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+            </CustomModal>
+          </>
+        )}
+
         {isAuth && (
           <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
         )}
