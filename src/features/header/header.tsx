@@ -86,7 +86,7 @@ export const HeaderLayout = () => {
             <Button onClick={showModal} type="primary" ghost>
               {t('newBoard')} <PlusOutlined />
             </Button>
-            <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+            <CustomModal open={open} cancel={handleCancel} footer={false} title={t('newBoard')}>
               <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
             </CustomModal>
           </>

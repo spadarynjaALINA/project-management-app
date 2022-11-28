@@ -1,8 +1,9 @@
-import { Button, Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import BoardService from '../../api-services/BoardService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -24,6 +25,7 @@ export const CustomModal: React.FC<{
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const [confirmLoading, setConfirmLoading] = useState(false);
   const draggleRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   const boardId = useAppSelector(selectCurrentBoardId);
   const dispatch = useAppDispatch();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
@@ -41,16 +43,17 @@ export const CustomModal: React.FC<{
   };
   const deleteItem = async () => {
     switch (props.title) {
-      case 'Delete board':
+      case t('deleteBoard'):
         try {
           await BoardService.deleteBoard(boardId);
           const response = await BoardService.getBoards();
           dispatch({ type: 'newBoardList', payload: response.data });
+          message.success(t('deleteBoardMsg'));
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            console.log(e.response?.data?.message);
+            message.error(t('boardError'));
           } else {
-            console.log(e);
+            message.error(t('noNameError'));
           }
         }
         break;
@@ -86,10 +89,10 @@ export const CustomModal: React.FC<{
         props.footer
           ? [
               <Button key="back" onClick={props.cancel}>
-                Cancel
+                {t('cancel')}
               </Button>,
               <Button key="yes" type="primary" onClick={deleteItem} loading={confirmLoading}>
-                Yes
+                {t('yes')}
               </Button>,
             ]
           : false

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Modal, Form, Input } from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { EditOutlined } from '@ant-design/icons';
@@ -51,9 +50,9 @@ export const BoardModal: React.FC<{
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('boardError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false); // moved here
@@ -61,7 +60,7 @@ export const BoardModal: React.FC<{
     }
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo);
   };
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {

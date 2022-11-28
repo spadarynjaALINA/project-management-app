@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import './sign-in.less';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import AuthService from '../../api-services/AuthService';
 import axios from 'axios';
@@ -18,6 +17,8 @@ export const SignIn = () => {
   const { t } = useTranslation();
   const loginMsg = t('loginMsg');
   const passMsg = t('passMsg');
+  const loginInvalidMsg = t('loginInvalidMsg');
+  const passInvalidMsg = t('passInvalidMsg');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -27,17 +28,18 @@ export const SignIn = () => {
       localStorage.setItem('token', response.data.token);
       const { userId, login } = jwt_decode(response.data.token) as IAuth;
       dispatch(setAuthData(userId, login));
+      message.success(t('successLoginMsg'));
       navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('userError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     }
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailed = (errorInfo: unknown) => {
     console.log('Failed:', errorInfo);
   };
 
@@ -60,8 +62,7 @@ export const SignIn = () => {
             { required: true, whitespace: true, message: loginMsg },
             {
               pattern: /^[A-Za-z\d]{5,}$/,
-              message:
-                'The login must be at least 5 characters and contain only letters and numbers',
+              message: loginInvalidMsg,
             },
           ]}
           hasFeedback
@@ -76,8 +77,7 @@ export const SignIn = () => {
             { required: true, message: passMsg },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
-              message:
-                'The password must be 8-12 characters and contain at least one letter and one number',
+              message: passInvalidMsg,
             },
           ]}
           hasFeedback

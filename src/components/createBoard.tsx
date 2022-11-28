@@ -1,4 +1,4 @@
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import axios from 'axios';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import { useState } from 'react';
@@ -24,15 +24,17 @@ export const CreateBoardForm = (props: {
       if (!!Object.values(data.data).filter((elem) => elem !== '').length) {
         const response = await BoardService.updateBoard(boardId, values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('updateBoardMsg'));
       } else {
         const response = await BoardService.createBoard(values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('createBoardMsg'));
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('boardError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false);

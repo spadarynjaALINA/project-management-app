@@ -1,8 +1,11 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import AuthService from '../../api-services/AuthService';
+import { useAppDispatch } from '../../hooks';
+import { IAuth, setAuthData } from '../sign-in/signInSlice';
+import jwt_decode from 'jwt-decode';
 import './sign-up.less';
 interface IRegistrationData {
   userName: string;
@@ -42,16 +45,27 @@ export const SignUp = () => {
   const confirmPassMsg = t('confirmPassMsg');
   const passMatchMsg = t('passMatchMsg');
   const nameMsg = t('nameMsg');
+  const nameInvalidMsg = t('nameInvalidMsg');
+  const loginInvalidMsg = t('loginInvalidMsg');
+  const passInvalidMsg = t('passInvalidMsg');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const onFinish = async (values: IRegistrationData) => {
     const { userName, login, password } = values;
     try {
       await AuthService.registration(userName, login, password);
+      message.success(t('successRegisterMsg'));
+      const response = await AuthService.authorization(values.login, values.password);
+      localStorage.setItem('token', response.data.token);
+      const { userId } = jwt_decode(response.data.token) as IAuth;
+      dispatch(setAuthData(userId, login));
+      navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('userError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     }
   };
@@ -67,7 +81,7 @@ export const SignUp = () => {
             { required: true, message: nameMsg, whitespace: true },
             {
               pattern: /^[a-zA-Z ]{2,}$/,
-              message: 'The name must be at least 2 characters and contain only letters',
+              message: nameInvalidMsg,
             },
           ]}
           hasFeedback
@@ -81,8 +95,7 @@ export const SignUp = () => {
             { required: true, message: loginMsg, whitespace: true },
             {
               pattern: /^[A-Za-z\d]{5,}$/,
-              message:
-                'The login must be at least 5 characters and contain only letters and numbers',
+              message: loginInvalidMsg,
             },
           ]}
           hasFeedback
@@ -97,8 +110,7 @@ export const SignUp = () => {
             { required: true, message: passMsg },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
-              message:
-                'The password must be 8-12 characters and contain at least one letter and one number',
+              message: passInvalidMsg,
             },
           ]}
           hasFeedback

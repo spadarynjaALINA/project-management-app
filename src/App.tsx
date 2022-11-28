@@ -10,7 +10,7 @@ import { Board } from './pages/board/board';
 import { NotFound } from './pages/not-found/not-found';
 import { Route, Routes } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
-import { Protected } from './Protected';
+import { PrivateRoute } from './PrivateRoute';
 const { Content } = Layout;
 function App() {
   return (
@@ -22,8 +22,8 @@ function App() {
             <Route path="/" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/boards" element={<Protected page={<Main />} />} />
-            <Route path="/boards/:id" element={<Protected page={<Board />} />} />
+            <Route path="/boards" element={<PrivateRoute page={<Main />} />} />
+            <Route path="/boards/:id" element={<PrivateRoute page={<Board />} />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
