@@ -1,1 +1,1 @@
-export const API_URL= "https://infinite-oasis-01603.herokuapp.com/"
+export const API_URL = 'https://infinite-oasis-01603.herokuapp.com/';
