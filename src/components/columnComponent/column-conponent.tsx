@@ -1,33 +1,39 @@
-import { Button, Card } from 'antd';
+import { Button, Card, Input } from 'antd';
 import {
   CheckCircleTwoTone,
   PlusOutlined,
   DeleteOutlined,
-  CloseCircleOutlined,
+  CloseCircleTwoTone,
 } from '@ant-design/icons';
 import './column-component.less';
 import { Task } from '../task/task';
 import { t } from 'i18next';
-import { useRef, useState } from 'react';
+import { SetStateAction, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
 import Draggable from 'react-draggable';
 import Meta from 'antd/lib/card/Meta';
 import { IColumn } from '../../api-services/types/types';
-import { selectCurrentColumn } from '../../features/column/columnSlice';
+
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
+import { selectCurrentBoardId } from '../boardComponent/boardSlice';
+import { selectCurrentColumn } from './columnSlice';
+import BoardService from '../../api-services/BoardService';
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
 }) => {
   const dispatch = useAppDispatch();
-  const del = useRef(null as unknown as HTMLDivElement);
+  const ed = useRef(null as unknown as HTMLDivElement);
   const title = useRef(null as unknown as HTMLDivElement);
   const column = useRef(null as unknown as HTMLDivElement);
+  const boardId = useAppSelector(selectCurrentBoardId);
+  const columnId = props.props.columnId;
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
+  const [columnName, setColumnName] = useState(props.props.title);
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentColumn = useAppSelector(selectCurrentColumn);
   const handleCancel = () => {
@@ -36,18 +42,73 @@ export const ColumnComponent = (props: {
   const closeConfirm = () => {
     setOpenConfirm(false);
   };
+  const openConfirmF = () => {
+    dispatch({ type: 'currentColumnId', payload: props.props.columnId });
+    console.log(props.props);
+    setOpenConfirm(true);
+  };
+  const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
+    setColumnName(e.target.value);
+  };
   const handleEdit = (e: React.SyntheticEvent) => {
-    if (!title.current.contains(e.target as Node)) setEdit(false);
+    e.preventDefault();
+    setEdit(true);
+    if (edit === true) {
+      console.log(ed.current);
+      // if (!ed.current.contains(e.target as Node)) {
+      //   console.log('not contain');
+      //
+      // }
+    }
+  };
+  const editHandle = async () => {
+    console.log('edit');
+
+    try {
+      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
+      const response = await BoardService.getBoards();
+      dispatch({ type: 'newBoardList', payload: response.data });
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data?.message);
+      } else {
+        console.log(e);
+      }
+    }
+    setEdit(false);
+  };
+  const cancelEditHandle = () => {
+    setColumnName(props.props.title);
   };
   const columnTitle = () => {
     return (
-      <div onClick={() => setEdit(true)} ref={title}>
+      <div className="title-wrap" onClick={handleEdit} ref={title}>
         {edit ? (
-          <div>
-            <input type={'text'} value={props.props.title} className="column-title" />
-            <CheckCircleTwoTone twoToneColor="#52c41a" />
-            <CloseCircleOutlined twoToneColor="#eb2f96" />
-          </div>
+          <>
+            <Input
+              onChange={handleChange}
+              autoFocus={true}
+              onBlur={() => {
+                setEdit(false);
+              }}
+              type={'text'}
+              value={columnName}
+              className="column-title"
+            />
+            <CheckCircleTwoTone
+              twoToneColor="#52c41a"
+              className="check-column-icon"
+              onClick={editHandle}
+              ref={ed}
+              style={edit ? { display: 'block' } : { display: 'none' }}
+            />
+            <CloseCircleTwoTone
+              twoToneColor="#eb2f96"
+              className="cancel-column-icon"
+              onClick={cancelEditHandle}
+              style={edit ? { display: 'block' } : { display: 'none' }}
+            />
+          </>
         ) : (
           <p>{props.props.title}</p>
         )}
@@ -96,11 +157,22 @@ export const ColumnComponent = (props: {
   return (
     <Card
       ref={column}
-      onClick={handleEdit}
+      // onClick={handleEdit}
       className="column"
       title={columnTitle()}
       bordered={false}
-      extra={[<DeleteOutlined key="ed" />]}
+      extra={[
+        <DeleteOutlined key="ed" onClick={openConfirmF} />,
+        <CustomModal
+          key={'del-confirm'}
+          open={openConfirm}
+          cancel={closeConfirm}
+          footer={true}
+          title={'Delete column'}
+        >
+          <p>Are you really want to delete this column?</p>
+        </CustomModal>,
+      ]}
       style={{ maxHeight: '72vh' }}
       hoverable={true}
       draggable={true}
@@ -122,7 +194,7 @@ export const ColumnComponent = (props: {
             title={'New Task'}
           >
             <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
-          </CustomModal>{' '}
+          </CustomModal>
         </Button>,
       ]}
     >

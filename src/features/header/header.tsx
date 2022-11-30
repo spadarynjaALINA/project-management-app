@@ -14,7 +14,7 @@ import UserService from '../../api-services/UserService';
 import jwt_decode from 'jwt-decode';
 import { CreateBoardForm } from '../../components/createBoard';
 import { CustomModal } from '../modal/modal';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export const HeaderLayout = () => {
   const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
   const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleCancel = () => {
     setOpen(false);
   };
@@ -47,7 +47,7 @@ export const HeaderLayout = () => {
       key: '0',
     },
     {
-      label: <a href="https://www.aliyun.com">{t('profile')}</a>,
+      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
       key: '1',
     },
     {

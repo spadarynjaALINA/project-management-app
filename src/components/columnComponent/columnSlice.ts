@@ -10,6 +10,7 @@ const currentColumn = createAction<IColumn>('currentColumn');
 export const columns = createSlice({
   name: 'columns',
   initialState: {
+    columnId: '',
     columnList: [] as IColumn[],
     columnModalData: {} as { boardId: string; title: string },
     currentColumn: {} as IColumn,

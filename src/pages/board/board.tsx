@@ -9,7 +9,10 @@ import {
   selectCurrentBoardId,
 } from '../../components/boardComponent/boardSlice';
 import { ColumnComponent } from '../../components/columnComponent/column-conponent';
-import { selectColumnModalData, selectColumnsList } from '../../features/column/columnSlice';
+import {
+  selectColumnModalData,
+  selectColumnsList,
+} from '../../components/columnComponent/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { PlusOutlined } from '@ant-design/icons';
 import './board.less';

@@ -1,4 +1,5 @@
-const CracoLessPlugin =require('craco-less');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const CracoLessPlugin = require('craco-less');
 module.exports = {
   plugins: [
     {
@@ -6,7 +7,11 @@ module.exports = {
       options: {
         lessLoaderOptions: {
           lessOptions: {
-            modifyVars:	{ '@primary-color': '#1DA57A' },
+            modifyVars: {
+              '@primary-color': '#417D8B',
+              '@layout-header-background': '#211F30',
+              '@layout-body-background': '#F2F8F5',
+            },
             javascriptEnabled: true,
           },
         },
@@ -16,3 +21,4 @@ module.exports = {
 };
 // все переменные стилей тут:
 // https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
+// https://github.com/ant-design/ant-design/blob/4.x-stable/components/style/themes/default.less
