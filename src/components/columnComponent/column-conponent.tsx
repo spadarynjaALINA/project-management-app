@@ -8,14 +8,11 @@ import {
 import './column-component.less';
 import { TaskComponent } from '../task/task';
 import { t } from 'i18next';
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import { SetStateAction, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
-import { CreateBoardForm } from '../createBoard';
 import Draggable from 'react-draggable';
-import Meta from 'antd/lib/card/Meta';
 import { IColumn, ITask } from '../../api-services/types/types';
-
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
@@ -23,8 +20,7 @@ import { selectCurrentBoardId } from '../boardComponent/boardSlice';
 import { selectColumnsList, selectCurrentColumn } from './columnSlice';
 import BoardService from '../../api-services/BoardService';
 import { CreateTaskForm } from '../createTask';
-import TaskService from '../../api-services/TaskService';
-import { selectTasksList } from '../task/taskSlice';
+
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
 }) => {
@@ -41,7 +37,6 @@ export const ColumnComponent = (props: {
   const currentColumn = useAppSelector(selectCurrentColumn);
   let tasksList = [] as ITask[] | undefined;
   useAppSelector(selectColumnsList).map((item) => {
-    console.log(item, '<----item');
     if (item.id === columnId) tasksList = item.tasks;
   });
 
@@ -57,14 +52,12 @@ export const ColumnComponent = (props: {
 
   const handleCancel = () => {
     setOpenModal(false);
-    console.log('click cancel', openModal);
   };
   const closeConfirm = () => {
     setOpenConfirm(false);
   };
   const openConfirmF = () => {
     dispatch({ type: 'currentColumnId', payload: props.props.columnId });
-    console.log(props.props);
     setOpenConfirm(true);
   };
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
@@ -72,13 +65,6 @@ export const ColumnComponent = (props: {
   };
   const handleEdit = () => {
     setEdit(true);
-    if (edit === true) {
-      console.log(ed.current);
-      // if (!ed.current.contains(e.target as Node)) {
-      //   console.log('not contain');
-      //
-      // }
-    }
   };
   const editHandle = async () => {
     console.log('edit');
@@ -136,7 +122,7 @@ export const ColumnComponent = (props: {
   };
   const showModalTask = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    console.log('open modal');
+
     setOpenModal(true);
   };
   const DragStartHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {

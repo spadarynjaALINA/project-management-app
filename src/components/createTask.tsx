@@ -2,14 +2,10 @@ import { Form, Input, Button } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import BoardService from '../api-services/BoardService';
 import { IBoard } from '../api-services/types/types';
-import { useAppSelector, useAppDispatch } from '../hooks';
-import { selectCurrentBoardId, selectCurrentData } from './boardComponent/boardSlice';
+import { useAppDispatch } from '../hooks';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
-import { selectCurrentColumn } from './columnComponent/columnSlice';
 import TaskService from '../api-services/TaskService';
-import { selectUserId } from '../features/sign-in/signInSlice';
 import jwt_decode from 'jwt-decode';
 import { useLocation } from 'react-router-dom';
 
@@ -21,7 +17,6 @@ export const CreateTaskForm = (props: {
   const { userId } = token ? (jwt_decode(token) as { userId: string }) : { userId: '' };
   const location = useLocation();
   const boardId = location.pathname.slice(9);
-  const data = useAppSelector(selectCurrentData);
   const dispatch = useAppDispatch();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
@@ -29,7 +24,6 @@ export const CreateTaskForm = (props: {
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
     try {
-      console.log(userId, '<---userId');
       const response = await TaskService.createTask(
         userId,
         boardId,
