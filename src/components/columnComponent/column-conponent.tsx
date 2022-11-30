@@ -43,7 +43,8 @@ export const ColumnComponent = (props: {
     setOpenConfirm(false);
   };
   const openConfirmF = () => {
-    dispatch({ type: 'currentColumnId', payload: props.props.columnId });
+    dispatch({ type: 'currentColumn', payload: props.props.column });
+    dispatch({ type: 'currentBoardId', payload: props.props.boardId });
     // console.log(props.props);
     setOpenConfirm(true);
   };
@@ -88,7 +89,6 @@ export const ColumnComponent = (props: {
   const cancelEditHandle = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     // setColumnName(props.props.title);
-    console.log('object');
     setEdit(false);
   };
   // console.log(edit);
