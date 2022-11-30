@@ -44,7 +44,7 @@ export const ColumnComponent = (props: {
   };
   const openConfirmF = () => {
     dispatch({ type: 'currentColumnId', payload: props.props.columnId });
-    console.log(props.props);
+    // console.log(props.props);
     setOpenConfirm(true);
   };
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
@@ -53,16 +53,18 @@ export const ColumnComponent = (props: {
   const handleEdit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     setEdit(true);
-    if (edit === true) {
-      console.log(ed.current);
-      // if (!ed.current.contains(e.target as Node)) {
-      //   console.log('not contain');
-      //
-      // }
-    }
+    // console.log('handleEdit');
+    // if (edit === true) {
+    //   console.log(ed.current);
+    //   // if (!ed.current.contains(e.target as Node)) {
+    //   //   console.log('not contain');
+    //   //
+    //   // }
+    // }
   };
-  const editHandle = async () => {
-    console.log('edit');
+  const editHandle = async (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    // console.log('edit');
 
     try {
       await ColumnService.updateColumn(
@@ -83,9 +85,13 @@ export const ColumnComponent = (props: {
       setEdit(false);
     }
   };
-  const cancelEditHandle = () => {
-    setColumnName(props.props.title);
+  const cancelEditHandle = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    // setColumnName(props.props.title);
+    console.log('object');
+    setEdit(false);
   };
+  // console.log(edit);
   const columnTitle = () => {
     return (
       <div className="title-wrap" onClick={handleEdit} ref={title}>
@@ -106,13 +112,13 @@ export const ColumnComponent = (props: {
               className="check-column-icon"
               onClick={editHandle}
               ref={ed}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
             <CloseCircleTwoTone
               twoToneColor="#eb2f96"
               className="cancel-column-icon"
               onClick={cancelEditHandle}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
           </>
         ) : (
