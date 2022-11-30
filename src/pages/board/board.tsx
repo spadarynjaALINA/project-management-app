@@ -21,6 +21,7 @@ import { CreateBoardForm } from '../../components/createBoard';
 import { CreateColumnForm } from '../../components/createColumn';
 import ColumnService from '../../api-services/ColumnService';
 import { useLocation } from 'react-router-dom';
+import { sortColumn } from '../../components/columnComponent/utils';
 
 export const Board = () => {
   const { t } = useTranslation();
@@ -33,8 +34,7 @@ export const Board = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await ColumnService.getColumns(id);
-      dispatch({ type: 'newColumnsList', payload: response.data });
-      dispatch({ type: 'currentBoardId', payload: id });
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     };
     fetchData();
   }, [dispatch, columnData, id]);
@@ -43,7 +43,7 @@ export const Board = () => {
     return columnsList.map((column) => (
       <ColumnComponent
         key={column.id}
-        props={{ columnId: column.id, title: column.title, order: column.order }}
+        props={{ boardId: id, column, columnId: column.id, title: column.title }}
       ></ColumnComponent>
     ));
   };

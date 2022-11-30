@@ -6,7 +6,7 @@ import Draggable from 'react-draggable';
 import BoardService from '../../api-services/BoardService';
 import ColumnService from '../../api-services/ColumnService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
-import { selectCurrentColumnId } from '../../components/columnComponent/columnSlice';
+import { selectCurrentColumn } from '../../components/columnComponent/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 export const CustomModal: React.FC<{
@@ -27,7 +27,7 @@ export const CustomModal: React.FC<{
   const [confirmLoading, setConfirmLoading] = useState(false);
   const draggleRef = useRef<HTMLDivElement>(null);
   const boardId = useAppSelector(selectCurrentBoardId);
-  const columnId = useAppSelector(selectCurrentColumnId);
+  const column = useAppSelector(selectCurrentColumn);
   const dispatch = useAppDispatch();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
@@ -62,8 +62,8 @@ export const CustomModal: React.FC<{
       case 'Delete column':
         try {
           setConfirmLoading(true);
-          console.log(boardId, columnId);
-          await ColumnService.deleteColumn(boardId, columnId);
+          console.log(boardId, column.id);
+          await ColumnService.deleteColumn(boardId, column.id);
           const response = await ColumnService.getColumns(boardId);
           dispatch({ type: 'newColumnsList', payload: response.data });
           setConfirmLoading(false);

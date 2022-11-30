@@ -12,14 +12,18 @@ import { SetStateAction, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
+import Draggable from 'react-draggable';
+import Meta from 'antd/lib/card/Meta';
+import { IColumn } from '../../api-services/types/types';
+
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
-import BoardService from '../../api-services/BoardService';
+import { sortColumn } from './utils';
 import { selectCurrentBoardId } from '../boardComponent/boardSlice';
-import { selectCurrentColumnId } from './columnSlice';
-
+import { selectCurrentColumn } from './columnSlice';
+import BoardService from '../../api-services/BoardService';
 export const ColumnComponent = (props: {
-  props: { columnId: string; title: string; order: number };
+  props: { boardId: string; column: IColumn; columnId: string; title: string };
 }) => {
   const dispatch = useAppDispatch();
   const ed = useRef(null as unknown as HTMLDivElement);
@@ -31,7 +35,7 @@ export const ColumnComponent = (props: {
   const [edit, setEdit] = useState(false);
   const [columnName, setColumnName] = useState(props.props.title);
   const [openConfirm, setOpenConfirm] = useState(false);
-
+  const currentColumn = useAppSelector(selectCurrentColumn);
   const handleCancel = () => {
     setOpen(false);
   };
@@ -61,7 +65,7 @@ export const ColumnComponent = (props: {
     console.log('edit');
 
     try {
-      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.order);
+      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
       const response = await BoardService.getBoards();
       dispatch({ type: 'newBoardList', payload: response.data });
     } catch (e) {
@@ -114,7 +118,42 @@ export const ColumnComponent = (props: {
   const showModal = () => {
     setOpen(true);
   };
+  const DragStartHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
+    dispatch({ type: 'currentColumn', payload: column });
+  };
 
+  // const DragEndHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
+  //   console.log(column, 'end');
+  // };
+
+  // const DragLeaveHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
+  //   console.log(column, 'leave');
+  // };
+  const DropHandler = async (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
+    e.preventDefault();
+    try {
+      await ColumnService.updateColumn(
+        props.props.boardId,
+        currentColumn.id,
+        currentColumn.title,
+        column.order
+      );
+      await ColumnService.updateColumn(
+        props.props.boardId,
+        column.id,
+        column.title,
+        currentColumn.order
+      );
+      const response = await ColumnService.getColumns(props.props.boardId);
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data?.message);
+      } else {
+        console.log(e);
+      }
+    }
+  };
   return (
     <Card
       ref={column}
@@ -136,6 +175,14 @@ export const ColumnComponent = (props: {
       ]}
       style={{ maxHeight: '72vh' }}
       hoverable={true}
+      draggable={true}
+      onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}
+      // onDragLeave={(e) => DragLeaveHandler(e, props.props.column)}
+      // onDragEnd={(e: React.MouseEvent<HTMLElement>) => DragEndHandler(e, props.props.column)}
+      onDragOver={(e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+      }}
+      onDrop={(e: React.MouseEvent<HTMLElement>) => DropHandler(e, props.props.column)}
       actions={[
         <Button key={'new'} onClick={showModal} type="primary" ghost>
           {t('newTask')} <PlusOutlined />
