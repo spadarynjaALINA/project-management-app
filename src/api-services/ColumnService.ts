@@ -16,7 +16,15 @@ export default class ColumnService {
     return api.delete<IColumn>(`/boards/${boardId}/columns/${columnId}`);
   }
 
-  static updateColumn(boardId: string, columnId: string, title: string, order: number): Promise<AxiosResponse<IColumn>> {
-    return api.put<IColumn>(`/boards/${boardId}/columns/${columnId}`, { title, order });
+  static updateColumn(
+    boardId: string,
+    columnId: string,
+    title: string,
+    order: number
+  ): Promise<AxiosResponse<IColumn>> {
+    return api.put<IColumn>(`/boards/${boardId}/columns/${columnId}`, {
+      title,
+      order,
+    });
   }
 }

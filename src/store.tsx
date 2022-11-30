@@ -1,6 +1,6 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
 import { boards } from './components/boardComponent/boardSlice';
-import { columns } from './features/column/columnSlice';
+import { columns } from './components/columnComponent/columnSlice';
 import { signInSlice } from './features/sign-in/signInSlice';
 
 const rootReducer = combineReducers({

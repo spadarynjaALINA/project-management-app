@@ -1,7 +1,47 @@
 @import './../../assets/less/variables.less';
 
 .column {
-	.ant-card-body {
-    padding: 10px;
+	height: fit-content;
+	width: fit-content;
+	overflow-y: auto;
+  border-radius: 10px;
+.ant-card-head {
+  border-bottom: none;
 }
+	.ant-card-body {
+    padding:  10px;
+				max-height: 56vh;
+					overflow-y: auto;
+					 &::-webkit-scrollbar {
+    width: 4px;
+    background-color: @bg-gray;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: @gray;
+    border-radius: 2px;
+  }
+}
+.ant-card-actions {
+    border-top: none
+}
+}
+.column-title {
+word-wrap:break-word;
+max-width: 210px;
+}
+.check-column-icon,.cancel-column-icon {
+  position: absolute;
+  left:165px;
+  top:25px;
+  margin: 0  0 0 5px;
+}
+
+.cancel-column-icon {
+
+  left:190px;
+
+}
+.ant-card-head{
+
+  padding: 0 10px;
 }

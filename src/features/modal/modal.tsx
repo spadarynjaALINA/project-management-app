@@ -5,7 +5,9 @@ import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import BoardService from '../../api-services/BoardService';
+import ColumnService from '../../api-services/ColumnService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
+import { selectCurrentColumn } from '../../components/columnComponent/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 export const CustomModal: React.FC<{
@@ -27,6 +29,7 @@ export const CustomModal: React.FC<{
   const draggleRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const boardId = useAppSelector(selectCurrentBoardId);
+  const column = useAppSelector(selectCurrentColumn);
   const dispatch = useAppDispatch();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
@@ -45,10 +48,44 @@ export const CustomModal: React.FC<{
     switch (props.title) {
       case t('deleteBoard'):
         try {
+          setConfirmLoading(true);
           await BoardService.deleteBoard(boardId);
           const response = await BoardService.getBoards();
           dispatch({ type: 'newBoardList', payload: response.data });
           message.success(t('deleteBoardMsg'));
+          setConfirmLoading(false);
+        } catch (e) {
+          if (axios.isAxiosError(e)) {
+            message.error(t('boardError'));
+          } else {
+            message.error(t('noNameError'));
+          }
+        }
+        break;
+      case 'Delete column':
+        try {
+          setConfirmLoading(true);
+          console.log(boardId, column.id);
+          await ColumnService.deleteColumn(boardId, column.id);
+          const response = await ColumnService.getColumns(boardId);
+          dispatch({ type: 'newColumnsList', payload: response.data });
+          setConfirmLoading(false);
+        } catch (e) {
+          if (axios.isAxiosError(e)) {
+            message.error(t('boardError'));
+          } else {
+            message.error(t('noNameError'));
+          }
+        }
+        break;
+      case 'Delete column':
+        try {
+          setConfirmLoading(true);
+          console.log(boardId, column.id);
+          await ColumnService.deleteColumn(boardId, column.id);
+          const response = await ColumnService.getColumns(boardId);
+          dispatch({ type: 'newColumnsList', payload: response.data });
+          setConfirmLoading(false);
         } catch (e) {
           if (axios.isAxiosError(e)) {
             message.error(t('boardError'));
