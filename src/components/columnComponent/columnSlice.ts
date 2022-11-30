@@ -20,6 +20,7 @@ export const columns = createSlice({
     builder.addCase(newColumnsList, (state, action) => {
       state.columnList = action.payload;
     });
+
     builder.addCase(columnModalDataAction, (state, action) => {
       state.columnModalData = action.payload;
     });

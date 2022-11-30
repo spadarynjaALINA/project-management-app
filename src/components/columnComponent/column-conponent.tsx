@@ -6,22 +6,25 @@ import {
   CloseCircleTwoTone,
 } from '@ant-design/icons';
 import './column-component.less';
-import { Task } from '../task/task';
+import { TaskComponent } from '../task/task';
 import { t } from 'i18next';
-import { SetStateAction, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
 import Draggable from 'react-draggable';
 import Meta from 'antd/lib/card/Meta';
-import { IColumn } from '../../api-services/types/types';
+import { IColumn, ITask } from '../../api-services/types/types';
 
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
 import { selectCurrentBoardId } from '../boardComponent/boardSlice';
-import { selectCurrentColumn } from './columnSlice';
+import { selectColumnsList, selectCurrentColumn } from './columnSlice';
 import BoardService from '../../api-services/BoardService';
+import { CreateTaskForm } from '../createTask';
+import TaskService from '../../api-services/TaskService';
+import { selectTasksList } from '../task/taskSlice';
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
 }) => {
@@ -31,13 +34,30 @@ export const ColumnComponent = (props: {
   const column = useRef(null as unknown as HTMLDivElement);
   const boardId = useAppSelector(selectCurrentBoardId);
   const columnId = props.props.columnId;
-  const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false);
   const [columnName, setColumnName] = useState(props.props.title);
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentColumn = useAppSelector(selectCurrentColumn);
+  let tasksList = [] as ITask[] | undefined;
+  useAppSelector(selectColumnsList).map((item) => {
+    console.log(item, '<----item');
+    if (item.id === columnId) tasksList = item.tasks;
+  });
+
+  const renderTasks = () => {
+    if (tasksList) {
+      return tasksList.map((task) => {
+        return <TaskComponent key={task.id} props={task}></TaskComponent>;
+      });
+    } else {
+      return 'not et';
+    }
+  };
+
   const handleCancel = () => {
-    setOpen(false);
+    setOpenModal(false);
+    console.log('click cancel', openModal);
   };
   const closeConfirm = () => {
     setOpenConfirm(false);
@@ -50,8 +70,7 @@ export const ColumnComponent = (props: {
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
     setColumnName(e.target.value);
   };
-  const handleEdit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const handleEdit = () => {
     setEdit(true);
     if (edit === true) {
       console.log(ed.current);
@@ -115,8 +134,10 @@ export const ColumnComponent = (props: {
       </div>
     );
   };
-  const showModal = () => {
-    setOpen(true);
+  const showModalTask = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    console.log('open modal');
+    setOpenModal(true);
   };
   const DragStartHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
     dispatch({ type: 'currentColumn', payload: column });
@@ -184,34 +205,26 @@ export const ColumnComponent = (props: {
       }}
       onDrop={(e: React.MouseEvent<HTMLElement>) => DropHandler(e, props.props.column)}
       actions={[
-        <Button key={'new'} onClick={showModal} type="primary" ghost>
-          {t('newTask')} <PlusOutlined />
+        <>
+          <Button key={'new-task'} type="primary" ghost onClick={showModalTask}>
+            {t('newTask')} <PlusOutlined />
+          </Button>
           <CustomModal
             key={'new-modal'}
-            open={open}
+            open={openModal}
             cancel={handleCancel}
             footer={false}
-            title={'New Task'}
+            title={'New task'}
           >
-            <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+            <CreateTaskForm
+              cancel={handleCancel}
+              data={{ title: '', description: '', boardId, columnId }}
+            />
           </CustomModal>
-        </Button>,
+        </>,
       ]}
     >
-      <div className="tasks-wrap">
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-      </div>
+      <div className="tasks-wrap">{renderTasks()}</div>
     </Card>
   );
 };

@@ -22,6 +22,8 @@ import { CreateColumnForm } from '../../components/createColumn';
 import ColumnService from '../../api-services/ColumnService';
 import { useLocation } from 'react-router-dom';
 import { sortColumn } from '../../components/columnComponent/utils';
+import TaskService from '../../api-services/TaskService';
+import { IColumn } from '../../api-services/types/types';
 
 export const Board = () => {
   const { t } = useTranslation();
@@ -34,7 +36,16 @@ export const Board = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await ColumnService.getColumns(id);
-      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      const columns = response.data;
+      const promises = columns.map(async (column) => {
+        return await TaskService.getTasks(id, column.id).then((data) => {
+          const newObj = { ...column, tasks: data.data };
+          return newObj;
+        });
+      });
+      Promise.all(promises).then((res) =>
+        dispatch({ type: 'newColumnsList', payload: res.sort(sortColumn) })
+      );
     };
     fetchData();
   }, [dispatch, columnData, id]);
