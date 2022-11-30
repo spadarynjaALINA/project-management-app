@@ -65,17 +65,23 @@ export const ColumnComponent = (props: {
     console.log('edit');
 
     try {
-      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
-      const response = await BoardService.getBoards();
-      dispatch({ type: 'newBoardList', payload: response.data });
+      await ColumnService.updateColumn(
+        props.props.boardId,
+        props.props.column.id,
+        columnName,
+        props.props.column.order
+      );
+      const response = await ColumnService.getColumns(props.props.boardId);
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);
       } else {
         console.log(e);
       }
+    } finally {
+      setEdit(false);
     }
-    setEdit(false);
   };
   const cancelEditHandle = () => {
     setColumnName(props.props.title);
@@ -88,9 +94,9 @@ export const ColumnComponent = (props: {
             <Input
               onChange={handleChange}
               autoFocus={true}
-              onBlur={() => {
-                setEdit(false);
-              }}
+              // onBlur={() => {
+              //   setEdit(false);
+              // }}
               type={'text'}
               value={columnName}
               className="column-title"
