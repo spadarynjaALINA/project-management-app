@@ -20,6 +20,7 @@ import { selectCurrentBoardId } from '../boardComponent/boardSlice';
 import { selectColumnsList, selectCurrentColumn } from './columnSlice';
 import BoardService from '../../api-services/BoardService';
 import { CreateTaskForm } from '../createTask';
+import TaskService from '../../api-services/TaskService';
 
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
@@ -46,7 +47,7 @@ export const ColumnComponent = (props: {
         return <TaskComponent key={task.id} props={task}></TaskComponent>;
       });
     } else {
-      return 'not et';
+      return '';
     }
   };
 
@@ -57,7 +58,9 @@ export const ColumnComponent = (props: {
     setOpenConfirm(false);
   };
   const openConfirmF = () => {
-    dispatch({ type: 'currentColumnId', payload: props.props.columnId });
+    dispatch({ type: 'currentColumn', payload: props.props.column });
+    dispatch({ type: 'currentBoardId', payload: props.props.boardId });
+    // console.log(props.props);
     setOpenConfirm(true);
   };
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
@@ -66,25 +69,44 @@ export const ColumnComponent = (props: {
   const handleEdit = () => {
     setEdit(true);
   };
-  const editHandle = async () => {
-    console.log('edit');
+  const editHandle = async (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    // console.log('edit');
 
     try {
-      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
-      const response = await BoardService.getBoards();
-      dispatch({ type: 'newBoardList', payload: response.data });
+      await ColumnService.updateColumn(
+        props.props.boardId,
+        props.props.column.id,
+        columnName,
+        props.props.column.order
+      );
+      const response = await ColumnService.getColumns(props.props.boardId);
+      const columns = response.data;
+      const promises = columns.map(async (column) => {
+        return await TaskService.getTasks(props.props.boardId, column.id).then((data) => {
+          const newObj = { ...column, tasks: data.data };
+          return newObj;
+        });
+      });
+      Promise.all(promises).then((res) =>
+        dispatch({ type: 'newColumnsList', payload: res.sort(sortColumn) })
+      );
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);
       } else {
         console.log(e);
       }
+    } finally {
+      setEdit(false);
     }
+  };
+  const cancelEditHandle = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    setColumnName(props.props.title);
     setEdit(false);
   };
-  const cancelEditHandle = () => {
-    setColumnName(props.props.title);
-  };
+  // console.log(edit);
   const columnTitle = () => {
     return (
       <div className="title-wrap" onClick={handleEdit} ref={title}>
@@ -93,9 +115,9 @@ export const ColumnComponent = (props: {
             <Input
               onChange={handleChange}
               autoFocus={true}
-              onBlur={() => {
-                setEdit(false);
-              }}
+              // onBlur={() => {
+              //   setEdit(false);
+              // }}
               type={'text'}
               value={columnName}
               className="column-title"
@@ -105,13 +127,13 @@ export const ColumnComponent = (props: {
               className="check-column-icon"
               onClick={editHandle}
               ref={ed}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
             <CloseCircleTwoTone
               twoToneColor="#eb2f96"
               className="cancel-column-icon"
               onClick={cancelEditHandle}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
           </>
         ) : (

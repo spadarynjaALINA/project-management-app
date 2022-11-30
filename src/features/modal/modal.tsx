@@ -62,7 +62,7 @@ export const CustomModal: React.FC<{
       case 'Delete column':
         try {
           setConfirmLoading(true);
-          console.log(boardId, column.id);
+          // console.log(boardId, column.id);
           await ColumnService.deleteColumn(boardId, column.id);
           const response = await ColumnService.getColumns(boardId);
           dispatch({ type: 'newColumnsList', payload: response.data });
