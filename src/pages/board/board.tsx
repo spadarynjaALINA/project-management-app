@@ -37,15 +37,13 @@ export const Board = () => {
       dispatch({ type: 'currentBoardId', payload: id });
     };
     fetchData();
-    console.log(columnsList);
   }, [dispatch, columnData, id]);
 
   const renderColumns = () => {
-    console.log(columnsList);
     return columnsList.map((column) => (
       <ColumnComponent
         key={column.id}
-        props={{ columnId: column.id, title: column.title }}
+        props={{ columnId: column.id, title: column.title, order: column.order }}
       ></ColumnComponent>
     ));
   };

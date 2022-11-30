@@ -22,6 +22,9 @@ export default class ColumnService {
     title: string,
     order: number
   ): Promise<AxiosResponse<IColumn>> {
-    return api.put<IColumn>(`/boards/${boardId}/columns/${columnId}`, { title, order });
+    return api.put<IColumn>(`/boards/${boardId}/columns/${columnId}`, {
+      title,
+      order,
+    });
   }
 }
