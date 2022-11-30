@@ -11,17 +11,19 @@ import { NotFound } from './pages/not-found/not-found';
 import { Route, Routes } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { Protected } from './Protected';
+import { Profile } from './pages/profile/profile';
 const { Content } = Layout;
 function App() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <HeaderLayout />
       <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
-        <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/boards" element={<Protected page={<Main />} />} />
             <Route path="/boards/:id" element={<Protected page={<Board />} />} />
             <Route path="*" element={<NotFound />} />

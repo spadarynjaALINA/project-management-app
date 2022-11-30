@@ -3,14 +3,25 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useAppDispatch } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const BoardComponent = (props: {
   props: { boardId: string; title: string; description: string };
 }) => {
+  const del = useRef(null as unknown as HTMLDivElement);
+  const ed = useRef(null as unknown as HTMLDivElement);
+  const board = useRef(null as unknown as HTMLDivElement);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const handleClick = () => {
+  const handleClick = (e: React.SyntheticEvent) => {
     dispatch({ type: 'currentBoardId', payload: props.props.boardId });
+    if (
+      board.current?.contains(e.target as Node) &&
+      !del.current?.contains(e.target as Node) &&
+      !ed.current?.contains(e.target as Node)
+    )
+      navigate(`/boards/:${props.props.boardId}`);
   };
   const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -37,11 +48,12 @@ export const BoardComponent = (props: {
 
   return (
     <Card
+      ref={board}
       onClick={handleClick}
       title={props.props.title || ''}
       bordered={false}
       extra={[
-        <Button key={'1'} onClick={showModal} type="text">
+        <Button key={'1'} onClick={showModal} type="text" ref={ed}>
           <EditOutlined />
         </Button>,
         <CustomModal
@@ -56,7 +68,7 @@ export const BoardComponent = (props: {
             data={{ title: props.props.title, description: props.props.description }}
           />
         </CustomModal>,
-        <Button key={'3'} onClick={showConfirm} type="text">
+        <Button key={'3'} onClick={showConfirm} type="text" ref={del}>
           <DeleteOutlined />
         </Button>,
         <CustomModal
