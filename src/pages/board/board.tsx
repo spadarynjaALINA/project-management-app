@@ -10,13 +10,10 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { PlusOutlined } from '@ant-design/icons';
 import './board.less';
 import { CustomModal } from '../../features/modal/modal';
-
 import { CreateColumnForm } from '../../components/createColumn';
 import ColumnService from '../../api-services/ColumnService';
 import { useLocation } from 'react-router-dom';
 import { sortColumn } from '../../components/columnComponent/utils';
-import TaskService from '../../api-services/TaskService';
-
 import { selectTaskModalData } from '../../components/task/taskSlice';
 
 export const Board = () => {
@@ -31,16 +28,7 @@ export const Board = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await ColumnService.getColumns(id);
-      const columns = response.data;
-      const promises = columns.map(async (column) => {
-        return await TaskService.getTasks(id, column.id).then((data) => {
-          const newObj = { ...column, tasks: data.data };
-          return newObj;
-        });
-      });
-      Promise.all(promises).then((res) =>
-        dispatch({ type: 'newColumnsList', payload: res.sort(sortColumn) })
-      );
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     };
     fetchData();
   }, [dispatch, columnData, taskData, id]);

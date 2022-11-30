@@ -8,7 +8,7 @@ import {
 import './column-component.less';
 import { TaskComponent } from '../task/task';
 import { t } from 'i18next';
-import { SetStateAction, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import Draggable from 'react-draggable';
@@ -16,11 +16,11 @@ import { IColumn, ITask } from '../../api-services/types/types';
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
-import { selectCurrentBoardId } from '../boardComponent/boardSlice';
-import { selectColumnsList, selectCurrentColumn } from './columnSlice';
-import BoardService from '../../api-services/BoardService';
+import { selectCurrentColumn } from './columnSlice';
 import { CreateTaskForm } from '../createTask';
 import TaskService from '../../api-services/TaskService';
+import { useLocation } from 'react-router-dom';
+import { selectUpdateTask } from '../task/taskSlice';
 
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
@@ -29,21 +29,27 @@ export const ColumnComponent = (props: {
   const ed = useRef(null as unknown as HTMLDivElement);
   const title = useRef(null as unknown as HTMLDivElement);
   const column = useRef(null as unknown as HTMLDivElement);
-  const boardId = useAppSelector(selectCurrentBoardId);
+  const location = useLocation();
+  const boardId = location.pathname.slice(9);
   const columnId = props.props.columnId;
   const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false);
   const [columnName, setColumnName] = useState(props.props.title);
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentColumn = useAppSelector(selectCurrentColumn);
-  let tasksList = [] as ITask[] | undefined;
-  useAppSelector(selectColumnsList).map((item) => {
-    if (item.id === columnId) tasksList = item.tasks;
-  });
+  const [taskList, setTaskList] = useState([] as ITask[]);
+  const isUpdate = useAppSelector(selectUpdateTask);
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await TaskService.getTasks(boardId, columnId);
+      setTaskList(res.data);
+    };
+    fetchData();
+  }, [boardId, columnId, isUpdate]);
 
   const renderTasks = () => {
-    if (tasksList) {
-      return tasksList.map((task) => {
+    if (taskList) {
+      return taskList.map((task) => {
         return <TaskComponent key={task.id} props={task}></TaskComponent>;
       });
     } else {
@@ -60,7 +66,7 @@ export const ColumnComponent = (props: {
   const openConfirmF = () => {
     dispatch({ type: 'currentColumn', payload: props.props.column });
     dispatch({ type: 'currentBoardId', payload: props.props.boardId });
-    // console.log(props.props);
+
     setOpenConfirm(true);
   };
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
@@ -71,8 +77,6 @@ export const ColumnComponent = (props: {
   };
   const editHandle = async (e: React.SyntheticEvent) => {
     e.stopPropagation();
-    // console.log('edit');
-
     try {
       await ColumnService.updateColumn(
         props.props.boardId,
@@ -81,16 +85,8 @@ export const ColumnComponent = (props: {
         props.props.column.order
       );
       const response = await ColumnService.getColumns(props.props.boardId);
-      const columns = response.data;
-      const promises = columns.map(async (column) => {
-        return await TaskService.getTasks(props.props.boardId, column.id).then((data) => {
-          const newObj = { ...column, tasks: data.data };
-          return newObj;
-        });
-      });
-      Promise.all(promises).then((res) =>
-        dispatch({ type: 'newColumnsList', payload: res.sort(sortColumn) })
-      );
+
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);

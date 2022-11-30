@@ -33,6 +33,7 @@ export const CreateTaskForm = (props: {
       );
 
       dispatch({ type: 'taskModalDataAction', payload: response.data });
+      dispatch({ type: 'updateTasks' });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);
