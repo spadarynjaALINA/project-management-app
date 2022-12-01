@@ -3,11 +3,12 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IBoard } from '../api-services/types/types';
-import { useAppDispatch } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import TaskService from '../api-services/TaskService';
 import jwt_decode from 'jwt-decode';
 import { useLocation } from 'react-router-dom';
+import { selectCurrentTask } from './task/taskSlice';
 
 export const CreateTaskForm = (props: {
   cancel: () => void;
@@ -21,19 +22,34 @@ export const CreateTaskForm = (props: {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
+  const data = useAppSelector(selectCurrentTask);
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
     try {
-      const response = await TaskService.createTask(
-        userId,
-        boardId,
-        props.data.columnId,
-        values.title,
-        values.description
-      );
+      if (!!props.data.description) {
+        const response = await TaskService.updateTask(
+          userId,
+          boardId,
+          props.data.columnId,
+          data.id,
+          values.title,
+          values.description,
+          data.order
+        );
+        dispatch({ type: 'taskModalDataAction', payload: response.data });
+        dispatch({ type: 'updateTasks' });
+      } else {
+        const response = await TaskService.createTask(
+          userId,
+          boardId,
+          props.data.columnId,
+          values.title,
+          values.description
+        );
 
-      dispatch({ type: 'taskModalDataAction', payload: response.data });
-      dispatch({ type: 'updateTasks' });
+        dispatch({ type: 'taskModalDataAction', payload: response.data });
+        dispatch({ type: 'updateTasks' });
+      }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data?.message);

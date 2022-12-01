@@ -116,7 +116,7 @@ export const ColumnComponent = (props: {
               // }}
               type={'text'}
               value={columnName}
-              className="column-title"
+              className="column-title-input"
             />
             <CheckCircleTwoTone
               twoToneColor="#52c41a"
@@ -133,7 +133,7 @@ export const ColumnComponent = (props: {
             />
           </>
         ) : (
-          <p>{props.props.title}</p>
+          <p className="column-title">{props.props.title}</p>
         )}
       </div>
     );
@@ -198,7 +198,7 @@ export const ColumnComponent = (props: {
           <p>Are you really want to delete this column?</p>
         </CustomModal>,
       ]}
-      style={{ maxHeight: '72vh' }}
+      style={{ maxHeight: '74vh' }}
       hoverable={true}
       draggable={true}
       onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}
