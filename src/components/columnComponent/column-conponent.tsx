@@ -12,7 +12,7 @@ import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
 import Draggable from 'react-draggable';
-import { IColumn, ITask } from '../../api-services/types/types';
+import { IColumn, ITask, IUser } from '../../api-services/types/types';
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
@@ -21,6 +21,7 @@ import { CreateTaskForm } from '../createTask';
 import TaskService from '../../api-services/TaskService';
 import { useLocation } from 'react-router-dom';
 import { selectUpdateTask } from '../task/taskSlice';
+import UserService from '../../api-services/UserService';
 
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
@@ -38,10 +39,13 @@ export const ColumnComponent = (props: {
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentColumn = useAppSelector(selectCurrentColumn);
   const [taskList, setTaskList] = useState([] as ITask[]);
+  const [userList, setUserList] = useState([] as IUser[]);
   const isUpdate = useAppSelector(selectUpdateTask);
   useEffect(() => {
     const fetchData = async () => {
       const res = await TaskService.getTasks(boardId, columnId);
+      const users = await UserService.getUsers();
+      setUserList(users.data);
       setTaskList(res.data);
     };
     fetchData();
@@ -50,7 +54,8 @@ export const ColumnComponent = (props: {
   const renderTasks = () => {
     if (taskList) {
       return taskList.map((task) => {
-        return <TaskComponent key={task.id} props={task}></TaskComponent>;
+        const user = userList.filter((i) => i.id === task.userId);
+        return <TaskComponent key={task.id} props={task} user={user[0].login}></TaskComponent>;
       });
     } else {
       return '';

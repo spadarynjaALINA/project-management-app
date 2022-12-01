@@ -1,11 +1,15 @@
-import { Card } from 'antd';
+import { Avatar, Card } from 'antd';
 import { useState } from 'react';
 import { ITask } from '../../api-services/types/types';
 import { CustomModal } from '../../features/modal/modal';
 import { useAppDispatch } from '../../hooks';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { CreateTaskForm } from '../createTask';
-export const TaskComponent = (props: { props: ITask }) => {
+import jwt_decode from 'jwt-decode';
+
+export const TaskComponent = (props: { props: ITask; user: string }) => {
+  const token = localStorage.getItem('token');
+  const { login } = token ? (jwt_decode(token) as { login: string }) : { login: '' };
   const description = props.props.description;
   const [openConfirm, setOpenConfirm] = useState(false);
   const [open, setOpen] = useState(false);
@@ -62,6 +66,11 @@ export const TaskComponent = (props: { props: ITask }) => {
         >
           <p>Are you really want to delete this task?</p>
         </CustomModal>,
+      ]}
+      actions={[
+        <Avatar key={login} size={32} style={{ left: '35%' }}>
+          {props.user}
+        </Avatar>,
       ]}
       style={{ width: 230, marginBottom: 10 }}
     >
