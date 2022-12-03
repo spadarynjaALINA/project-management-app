@@ -23,9 +23,9 @@ function App() {
             <Route path="/" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<PrivateRoute page={<Profile />} />} />
             <Route path="/boards" element={<PrivateRoute page={<Main />} />} />
-            <Route path="/boards/id" element={<PrivateRoute page={<Board />} />} />
+            <Route path="/boards/:id" element={<PrivateRoute page={<Board />} />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

@@ -6,9 +6,13 @@ import Draggable from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import BoardService from '../../api-services/BoardService';
 import ColumnService from '../../api-services/ColumnService';
+import UserService from '../../api-services/UserService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
 import { selectCurrentColumn } from '../../components/columnComponent/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import jwt_decode from 'jwt-decode';
+import { IAuth } from '../sign-in/signInSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const CustomModal: React.FC<{
   open: boolean;
@@ -31,6 +35,7 @@ export const CustomModal: React.FC<{
   const boardId = useAppSelector(selectCurrentBoardId);
   const column = useAppSelector(selectCurrentColumn);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -62,33 +67,36 @@ export const CustomModal: React.FC<{
           }
         }
         break;
-      case 'Delete column':
+      case t('deleteColumn'):
         try {
           setConfirmLoading(true);
           console.log(boardId, column.id);
           await ColumnService.deleteColumn(boardId, column.id);
           const response = await ColumnService.getColumns(boardId);
           dispatch({ type: 'newColumnsList', payload: response.data });
+          message.success(t('deleteColumnMsg'));
           setConfirmLoading(false);
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            message.error(t('boardError'));
+            message.error(t('columnError'));
           } else {
             message.error(t('noNameError'));
           }
         }
         break;
-      case 'Delete column':
+      case t('deleteUser'):
         try {
           setConfirmLoading(true);
-          console.log(boardId, column.id);
-          await ColumnService.deleteColumn(boardId, column.id);
-          const response = await ColumnService.getColumns(boardId);
-          dispatch({ type: 'newColumnsList', payload: response.data });
+          const token = localStorage.getItem('token') as string;
+          const { userId } = jwt_decode(token) as IAuth;
+          await UserService.deleteUser(userId);
+          localStorage.removeItem('token');
+          message.success(t('deleteUserMsg'));
           setConfirmLoading(false);
+          navigate('/');
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            message.error(t('boardError'));
+            message.error(t('userError'));
           } else {
             message.error(t('noNameError'));
           }

@@ -1,4 +1,4 @@
-import { Button, Card, Input } from 'antd';
+import { Button, Card, Input, message } from 'antd';
 import {
   CheckCircleTwoTone,
   PlusOutlined,
@@ -70,9 +70,9 @@ export const ColumnComponent = (props: {
       dispatch({ type: 'newBoardList', payload: response.data });
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     }
     setEdit(false);
@@ -148,9 +148,9 @@ export const ColumnComponent = (props: {
       dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     }
   };
@@ -168,9 +168,9 @@ export const ColumnComponent = (props: {
           open={openConfirm}
           cancel={closeConfirm}
           footer={true}
-          title={'Delete column'}
+          title={t('deleteColumn')}
         >
-          <p>Are you really want to delete this column?</p>
+          <p>{t('deleteColumnQuestion')}</p>
         </CustomModal>,
       ]}
       style={{ maxHeight: '72vh' }}
@@ -191,7 +191,7 @@ export const ColumnComponent = (props: {
             open={open}
             cancel={handleCancel}
             footer={false}
-            title={'New Task'}
+            title={t('newTask')}
           >
             <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
           </CustomModal>

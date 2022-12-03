@@ -7,6 +7,7 @@ import jwt_decode from 'jwt-decode';
 import { useAppDispatch } from '../../hooks';
 import { IAuth, setAuthData } from './signInSlice';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 interface IAuthorizationData {
   login: string;
@@ -21,8 +22,10 @@ export const SignIn = () => {
   const passInvalidMsg = t('passInvalidMsg');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const onFinish = async (values: IAuthorizationData) => {
+    setConfirmLoading(true);
     try {
       const response = await AuthService.authorization(values.login, values.password);
       localStorage.setItem('token', response.data.token);
@@ -36,6 +39,8 @@ export const SignIn = () => {
       } else {
         message.error(t('noNameError'));
       }
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -67,14 +72,14 @@ export const SignIn = () => {
           ]}
           hasFeedback
         >
-          <Input />
+          <Input autoComplete="username" />
         </Form.Item>
 
         <Form.Item
           label={t('password')}
           name="password"
           rules={[
-            { required: true, message: passMsg },
+            { required: true, whitespace: true, message: passMsg },
             {
               pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
               message: passInvalidMsg,
@@ -82,15 +87,19 @@ export const SignIn = () => {
           ]}
           hasFeedback
         >
-          <Input.Password />
+          <Input.Password autoComplete="current-password" />
         </Form.Item>
+
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            {t('submit')}
-          </Button>
-          <Button type="primary" loading>
-            {t('submitting')}
-          </Button>
+          {!confirmLoading ? (
+            <Button type="primary" htmlType="submit">
+              {t('submit')}
+            </Button>
+          ) : (
+            <Button type="primary" loading>
+              {t('submitting')}
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </>

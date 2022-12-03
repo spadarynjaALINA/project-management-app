@@ -7,12 +7,8 @@ import { useAppDispatch } from '../../hooks';
 import { IAuth, setAuthData } from '../sign-in/signInSlice';
 import jwt_decode from 'jwt-decode';
 import './sign-up.less';
-interface IRegistrationData {
-  userName: string;
-  login: string;
-  password: string;
-  confirm?: string;
-}
+import { useState } from 'react';
+import { IRegistrationData } from '../../interfaces/interfaces';
 
 const formItemLayout = {
   labelCol: {
@@ -50,9 +46,11 @@ export const SignUp = () => {
   const passInvalidMsg = t('passInvalidMsg');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const onFinish = async (values: IRegistrationData) => {
     const { userName, login, password } = values;
+    setConfirmLoading(true);
     try {
       await AuthService.registration(userName, login, password);
       message.success(t('successRegisterMsg'));
@@ -67,13 +65,22 @@ export const SignUp = () => {
       } else {
         message.error(t('noNameError'));
       }
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
   return (
     <>
       {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
-      <Form {...formItemLayout} form={form} name="register" onFinish={onFinish} scrollToFirstError>
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        autoComplete="off"
+        onFinish={onFinish}
+        scrollToFirstError
+      >
         <Form.Item
           name="userName"
           label={t('name')}
@@ -100,7 +107,7 @@ export const SignUp = () => {
           ]}
           hasFeedback
         >
-          <Input />
+          <Input autoComplete="username" />
         </Form.Item>
 
         <Form.Item
@@ -115,7 +122,7 @@ export const SignUp = () => {
           ]}
           hasFeedback
         >
-          <Input.Password />
+          <Input.Password autoComplete="new-password" />
         </Form.Item>
 
         <Form.Item
@@ -138,16 +145,19 @@ export const SignUp = () => {
             }),
           ]}
         >
-          <Input.Password />
+          <Input.Password autoComplete="new-password" />
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            {t('register')}
-          </Button>
-          <Button type="primary" loading>
-            {t('registering')}
-          </Button>
+          {!confirmLoading ? (
+            <Button type="primary" htmlType="submit">
+              {t('register')}
+            </Button>
+          ) : (
+            <Button type="primary" loading>
+              {t('registering')}
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </>
