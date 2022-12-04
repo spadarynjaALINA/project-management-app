@@ -2,11 +2,13 @@ import { Avatar, Card } from 'antd';
 import { useState } from 'react';
 import { ITask } from '../../api-services/types/types';
 import { CustomModal } from '../../features/modal/modal';
-import { useAppDispatch } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { CreateTaskForm } from '../createTask';
 import jwt_decode from 'jwt-decode';
-
+import { selectCurrentTask } from './taskSlice';
+import TaskService from '../../api-services/TaskService';
+import axios from 'axios';
 export const TaskComponent = (props: { props: ITask; user: string }) => {
   const token = localStorage.getItem('token');
   const { login } = token ? (jwt_decode(token) as { login: string }) : { login: '' };
@@ -14,6 +16,7 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const currentTask = useAppSelector(selectCurrentTask);
   const openConfirmF = () => {
     dispatch({ type: 'currentTask', payload: props.props });
     setOpenConfirm(true);
@@ -33,8 +36,97 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
     setOpen(false);
   };
 
+  const DragStartHandler = (e: React.MouseEvent<HTMLElement>, task: ITask) => {
+    e.stopPropagation();
+    dispatch({ type: 'currentTask', payload: task });
+  };
+
+  const DropHandler = async (e: React.MouseEvent<HTMLElement>, task: ITask) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      if (currentTask.columnId === task.columnId) {
+        await Promise.all([
+          TaskService.updateTask(
+            currentTask.userId,
+            currentTask.boardId!,
+            currentTask.columnId!,
+            currentTask.id,
+            currentTask.title,
+            currentTask.description,
+            task.order
+          ),
+          TaskService.updateTask(
+            task.userId,
+            task.boardId!,
+            task.columnId!,
+            task.id,
+            task.title,
+            task.description,
+            currentTask.order
+          ),
+        ]);
+      } else {
+        await Promise.all([
+          TaskService.deleteTask(task.boardId!, task.columnId!, task.id),
+          TaskService.deleteTask(currentTask.boardId!, currentTask.columnId!, currentTask.id),
+        ]);
+
+        const newCurrentTask = await TaskService.createTask(
+          currentTask.userId,
+          currentTask.boardId!,
+          task.columnId!,
+          currentTask.title,
+          currentTask.description
+        );
+
+        await TaskService.updateTask(
+          newCurrentTask.data.userId,
+          newCurrentTask.data.boardId!,
+          newCurrentTask.data.columnId!,
+          newCurrentTask.data.id,
+          newCurrentTask.data.title,
+          newCurrentTask.data.description,
+          task.order
+        );
+
+        const newTask = await TaskService.createTask(
+          task.userId,
+          task.boardId!,
+          currentTask.columnId!,
+          task.title,
+          task.description
+        );
+        await TaskService.updateTask(
+          newTask.data.userId,
+          newTask.data.boardId!,
+          newTask.data.columnId!,
+          newTask.data.id,
+          newTask.data.title,
+          newTask.data.description,
+          currentTask.order
+        );
+      }
+
+      dispatch({ type: 'updateTasks' });
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data?.message);
+      } else {
+        console.log(e);
+      }
+    }
+  };
+
   return (
     <Card
+      draggable={true}
+      onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props)}
+      onDragOver={(e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+      }}
+      onDrop={(e: React.MouseEvent<HTMLElement>) => DropHandler(e, props.props)}
       size="small"
       title={props.props.title}
       extra={[

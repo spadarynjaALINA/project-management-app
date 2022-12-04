@@ -75,6 +75,8 @@ export const CustomModal: React.FC<{
           } else {
             console.log(e);
           }
+        } finally {
+          dispatch({ type: 'currentColumn', payload: {} });
         }
         break;
       case 'Delete task':

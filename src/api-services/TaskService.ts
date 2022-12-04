@@ -45,6 +45,7 @@ export default class TaskService {
       description,
       boardId,
       userId,
+      columnId,
     });
   }
 }
