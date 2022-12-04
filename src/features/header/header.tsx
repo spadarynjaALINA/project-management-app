@@ -4,7 +4,7 @@ import { Header } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
@@ -62,7 +62,6 @@ export const HeaderLayout = () => {
   useEffect(() => {
     const onScroll = () => {
       window.pageYOffset === 0 ? setScroll(false) : setScroll(true);
-      console.log('scroll');
     };
     window.addEventListener('scroll', onScroll);
     const token = localStorage.getItem('token');

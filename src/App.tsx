@@ -16,13 +16,20 @@ const { Content } = Layout;
 function App() {
   const location = useLocation();
   const address = location.pathname.slice(9);
+  const boards = location.pathname.slice(0, 7);
+  console.log(boards, 'boards', location.pathname, 'pathname', address, 'address');
   const style =
     address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
     address === '' ? { padding: '0', minHeight: '75vh' } : { padding: '24px', minHeight: '75vh' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <HeaderLayout />
+      {(location.pathname === '/' ||
+        location.pathname === '/signin' ||
+        location.pathname === '/signup' ||
+        location.pathname === '/profile' ||
+        boards === '/boards') && <HeaderLayout />}
+
       <Content className="site-layout" style={style}>
         <div className="site-layout-background" style={bgStyle}>
           <Routes>
@@ -36,7 +43,11 @@ function App() {
           </Routes>
         </div>
       </Content>
-      <FooterLayout />
+      {(location.pathname === '/' ||
+        location.pathname === '/signin' ||
+        location.pathname === '/signup' ||
+        location.pathname === '/profile' ||
+        boards === '/boards') && <FooterLayout />}
     </Layout>
   );
 }

@@ -46,7 +46,7 @@ export const TRANSLATIONS_EN = {
   searchDesc:
     'Global search for a tasks by  title, users who participate in it and by the text of the task description',
   taskOwner: 'Task user',
-  taskOwnerDescr: 'You can see task userss in the every task card',
+  taskOwnerDescr: 'You can see task users in the every task card',
   kristina: 'Kristina Borokh',
   andrei: 'Andrei Kalasouski',
   alina: 'Alina Husarava',

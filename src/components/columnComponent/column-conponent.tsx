@@ -32,6 +32,7 @@ export const ColumnComponent = (props: {
   const column = useRef(null as unknown as HTMLDivElement);
   const location = useLocation();
   const boardId = location.pathname.slice(9);
+
   const columnId = props.props.columnId;
   const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false);
