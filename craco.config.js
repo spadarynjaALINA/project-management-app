@@ -11,6 +11,7 @@ module.exports = {
               '@primary-color': '#417D8B',
               '@layout-header-background': '#211F30',
               '@layout-body-background': '#F2F8F5',
+              '@btn-primary-color': '#F2F8F5',
             },
             javascriptEnabled: true,
           },

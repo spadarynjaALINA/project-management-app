@@ -23,6 +23,9 @@ export const HeaderLayout = () => {
   const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
   const [open, setOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
+  const scrolled = scroll ? 'header scrolled' : 'header';
+  const height = scroll ? '64px' : '70px';
   const navigate = useNavigate();
   const handleCancel = () => {
     setOpen(false);
@@ -57,6 +60,11 @@ export const HeaderLayout = () => {
   ];
 
   useEffect(() => {
+    const onScroll = () => {
+      window.pageYOffset === 0 ? setScroll(false) : setScroll(true);
+      console.log('scroll');
+    };
+    window.addEventListener('scroll', onScroll);
     const token = localStorage.getItem('token');
     if (token) {
       const fetchData = async () => {
@@ -72,7 +80,7 @@ export const HeaderLayout = () => {
 
   return (
     <>
-      <Header>
+      <Header className={scrolled} style={{ height: height }}>
         <NavLink to="/">
           <Button type="primary">
             <ArrowLeftOutlined />
