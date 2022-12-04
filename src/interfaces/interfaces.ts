@@ -9,3 +9,8 @@ export interface IRegistrationData {
   password: string;
   confirm?: string;
 }
+
+export interface IAuthorizationData {
+  login: string;
+  password: string;
+}

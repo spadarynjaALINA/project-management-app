@@ -68,6 +68,7 @@ export const ColumnComponent = (props: {
       await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
       const response = await BoardService.getBoards();
       dispatch({ type: 'newBoardList', payload: response.data });
+      message.success(t('updateBoardMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
         message.error(t('columnError'));

@@ -8,11 +8,7 @@ import { useAppDispatch } from '../../hooks';
 import { IAuth, setAuthData } from './signInSlice';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-
-interface IAuthorizationData {
-  login: string;
-  password: string;
-}
+import { IAuthorizationData } from '../../interfaces/interfaces';
 
 export const SignIn = () => {
   const { t } = useTranslation();
@@ -35,17 +31,13 @@ export const SignIn = () => {
       navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        message.error(t('userError'));
+        message.error(t('signinError'));
       } else {
         message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false);
     }
-  };
-
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -57,7 +49,6 @@ export const SignIn = () => {
         wrapperCol={{ span: 16 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item

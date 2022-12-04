@@ -30,7 +30,6 @@ export const BoardModal: React.FC<{
   };
   const titleMsg = t('titleMsg');
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
     dispatch({ type: 'isBoardModalAction', payload: false });
   };
   const onFinish = async (values: IBoard) => {
@@ -44,9 +43,11 @@ export const BoardModal: React.FC<{
       if (!!Object.values(data.data).filter((elem) => elem !== '').length) {
         const response = await BoardService.updateBoard(boardId, values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('updateBoardMsg'));
       } else {
         const response = await BoardService.createBoard(values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('createBoardMsg'));
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -60,9 +61,6 @@ export const BoardModal: React.FC<{
     }
   };
 
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Failed:', errorInfo);
-  };
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -138,7 +136,6 @@ export const BoardModal: React.FC<{
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="on"
         >
           <Form.Item

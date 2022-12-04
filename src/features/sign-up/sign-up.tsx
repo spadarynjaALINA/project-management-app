@@ -61,7 +61,7 @@ export const SignUp = () => {
       navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        message.error(t('userError'));
+        message.error(t('signupError'));
       } else {
         message.error(t('noNameError'));
       }

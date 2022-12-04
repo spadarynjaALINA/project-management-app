@@ -96,7 +96,7 @@ export const CustomModal: React.FC<{
           navigate('/');
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            message.error(t('userError'));
+            message.error(t('signinError'));
           } else {
             message.error(t('noNameError'));
           }

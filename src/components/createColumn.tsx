@@ -1,4 +1,4 @@
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import axios from 'axios';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import { useState } from 'react';
@@ -16,36 +16,43 @@ export const CreateColumnForm = (props: { cancel: () => void; data: { title: str
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
+  const titleInvalidMsg = t('titleInvalidMsg');
+
   const onFinish = async (values: IColumn) => {
     setConfirmLoading(true);
     try {
       const response = await ColumnService.createColumn(boardId, values.title);
       dispatch({ type: 'columnModalDataAction', payload: response.data });
+      message.success(t('createColumnMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false);
       props.cancel();
     }
   };
-  const onFinishFailed = (errorInfo: ValidateErrorEntity<IColumn>) => {
-    console.log('Failed:', errorInfo);
-  };
+
   return (
     <Form
       name="basic"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       autoComplete="on"
       fields={[{ name: ['title'], value: props.data.title }]}
     >
-      <Form.Item label={t('title')} name="title" rules={[{ required: true, message: titleMsg }]}>
+      <Form.Item
+        label={t('title')}
+        name="title"
+        rules={[
+          { required: true, whitespace: true, message: titleMsg },
+          { max: 20, message: titleInvalidMsg },
+        ]}
+      >
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

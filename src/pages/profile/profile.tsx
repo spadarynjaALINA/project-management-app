@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { IRegistrationData } from '../../interfaces/interfaces';
 import { CustomModal } from '../../features/modal/modal';
 import UserService from '../../api-services/UserService';
+import { setProfile } from './profileSlice';
 
 const formItemLayout = {
   labelCol: {
@@ -48,19 +49,37 @@ export const Profile = () => {
   const dispatch = useAppDispatch();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const token = localStorage.getItem('token') as string;
+  const { userId } = jwt_decode(token) as IAuth;
+
+  const getUserData = async () => {
+    try {
+      const response = await UserService.getUser(userId);
+      dispatch(setProfile(response.data.name, response.data.login));
+      form.setFieldsValue({ userName: response.data.name, login: response.data.login });
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        message.error(t('signinError'));
+      } else {
+        message.error(t('noNameError'));
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   const onFinish = async (values: IRegistrationData) => {
     const { userName, login, password } = values;
     setConfirmLoading(true);
     try {
-      const token = localStorage.getItem('token') as string;
-      const { userId } = jwt_decode(token) as IAuth;
       await UserService.updateUser(userId, userName, login, password);
       message.success(t('updateUserMsg'));
       dispatch(setAuthData(userId, login));
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        message.error(t('userError'));
+        message.error(t('signinError'));
       } else {
         message.error(t('noNameError'));
       }
@@ -114,7 +133,6 @@ export const Profile = () => {
       >
         <Input autoComplete="username" />
       </Form.Item>
-
       <Form.Item
         name="password"
         label={t('password')}
@@ -129,7 +147,6 @@ export const Profile = () => {
       >
         <Input.Password autoComplete="new-password" />
       </Form.Item>
-
       <Form.Item
         name="confirm"
         label={t('confirmPassword')}
@@ -152,7 +169,6 @@ export const Profile = () => {
       >
         <Input.Password autoComplete="new-password" />
       </Form.Item>
-
       <Form.Item
         {...tailFormItemLayout}
         extra={[

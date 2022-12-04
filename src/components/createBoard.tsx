@@ -18,6 +18,9 @@ export const CreateBoardForm = (props: {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
+  const descriptionMsg = t('descriptionMsg');
+  const titleInvalidMsg = t('titleInvalidMsg');
+
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
     try {
@@ -41,26 +44,34 @@ export const CreateBoardForm = (props: {
       props.cancel();
     }
   };
-  const onFinishFailed = (errorInfo: ValidateErrorEntity<IBoard>) => {
-    console.log('Failed:', errorInfo);
-  };
+
   return (
     <Form
       name="basic"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       autoComplete="on"
       fields={[
         { name: ['title'], value: props.data.title },
         { name: ['description'], value: props.data.description },
       ]}
     >
-      <Form.Item label={t('title')} name="title" rules={[{ required: true, message: titleMsg }]}>
+      <Form.Item
+        label={t('title')}
+        name="title"
+        rules={[
+          { required: true, whitespace: true, message: titleMsg },
+          { max: 20, message: titleInvalidMsg },
+        ]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item label={t('description')} name="description">
+      <Form.Item
+        label={t('description')}
+        name="description"
+        rules={[{ required: true, whitespace: true, message: descriptionMsg }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

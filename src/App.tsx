@@ -12,6 +12,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { PrivateRoute } from './PrivateRoute';
 import { Profile } from './pages/profile/profile';
+import { Start } from './pages/start/start';
 const { Content } = Layout;
 function App() {
   return (
@@ -20,7 +21,8 @@ function App() {
       <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
           <Routes>
-            <Route path="/" element={<Welcome />} />
+            <Route path="/" element={<Start />} />
+            <Route path="/welcome" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<PrivateRoute page={<Profile />} />} />

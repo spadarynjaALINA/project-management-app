@@ -78,7 +78,7 @@ export const HeaderLayout = () => {
   return (
     <>
       <Header>
-        <NavLink to="/">
+        <NavLink to="/welcome">
           <Button type="primary">
             <ArrowLeftOutlined />
             {t('home')}
