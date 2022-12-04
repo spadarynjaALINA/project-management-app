@@ -1,4 +1,4 @@
-import { Button, Card, Input } from 'antd';
+import { Button, Card, Input, message } from 'antd';
 import {
   CheckCircleTwoTone,
   PlusOutlined,
@@ -92,13 +92,13 @@ export const ColumnComponent = (props: {
         props.props.column.order
       );
       const response = await ColumnService.getColumns(props.props.boardId);
-
       dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      message.success(t('updateBoardMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setEdit(false);
@@ -187,9 +187,9 @@ export const ColumnComponent = (props: {
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       dispatch({ type: 'currentColumn', payload: {} });
@@ -208,9 +208,9 @@ export const ColumnComponent = (props: {
           open={openConfirm}
           cancel={closeConfirm}
           footer={true}
-          title={'Delete column'}
+          title={t('deleteColumn')}
         >
-          <p>Are you really want to delete this column?</p>
+          <p>{t('deleteColumnQuestion')}</p>
         </CustomModal>,
       ]}
       style={{ maxHeight: '74vh' }}
@@ -231,7 +231,7 @@ export const ColumnComponent = (props: {
             open={openModal}
             cancel={handleCancel}
             footer={false}
-            title={'New task'}
+            title={t('newTask')}
           >
             <CreateTaskForm
               cancel={handleCancel}

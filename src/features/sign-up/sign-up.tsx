@@ -1,15 +1,14 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import AuthService from '../../api-services/AuthService';
+import { useAppDispatch } from '../../hooks';
+import { IAuth, setAuthData } from '../sign-in/signInSlice';
+import jwt_decode from 'jwt-decode';
 import './sign-up.less';
-interface IRegistrationData {
-  userName: string;
-  login: string;
-  password: string;
-  confirm?: string;
-}
+import { useState } from 'react';
+import { IRegistrationData } from '../../interfaces/interfaces';
 
 const formItemLayout = {
   labelCol: {
@@ -42,51 +41,88 @@ export const SignUp = () => {
   const confirmPassMsg = t('confirmPassMsg');
   const passMatchMsg = t('passMatchMsg');
   const nameMsg = t('nameMsg');
+  const nameInvalidMsg = t('nameInvalidMsg');
+  const loginInvalidMsg = t('loginInvalidMsg');
+  const passInvalidMsg = t('passInvalidMsg');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const onFinish = async (values: IRegistrationData) => {
     const { userName, login, password } = values;
+    setConfirmLoading(true);
     try {
       await AuthService.registration(userName, login, password);
+      message.success(t('successRegisterMsg'));
+      const response = await AuthService.authorization(values.login, values.password);
+      localStorage.setItem('token', response.data.token);
+      const { userId } = jwt_decode(response.data.token) as IAuth;
+      dispatch(setAuthData(userId, login));
+      navigate('/boards');
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('signupError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
   return (
     <>
       {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
-      <Form {...formItemLayout} form={form} name="register" onFinish={onFinish} scrollToFirstError>
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        autoComplete="off"
+        onFinish={onFinish}
+        scrollToFirstError
+      >
         <Form.Item
           name="userName"
           label={t('name')}
-          rules={[{ required: true, message: nameMsg, whitespace: true }]}
+          rules={[
+            { required: true, message: nameMsg, whitespace: true },
+            {
+              pattern: /^[a-zA-Z ]{2,}$/,
+              message: nameInvalidMsg,
+            },
+          ]}
+          hasFeedback
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="login"
           label={t('login')}
-          rules={[{ required: true, message: loginMsg, whitespace: true }]}
+          rules={[
+            { required: true, message: loginMsg, whitespace: true },
+            {
+              pattern: /^[A-Za-z\d]{5,}$/,
+              message: loginInvalidMsg,
+            },
+          ]}
+          hasFeedback
         >
-          <Input />
+          <Input autoComplete="username" />
         </Form.Item>
 
         <Form.Item
           name="password"
           label={t('password')}
           rules={[
+            { required: true, message: passMsg },
             {
-              required: true,
-              message: passMsg,
+              pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
+              message: passInvalidMsg,
             },
           ]}
           hasFeedback
         >
-          <Input.Password />
+          <Input.Password autoComplete="new-password" />
         </Form.Item>
 
         <Form.Item
@@ -109,16 +145,19 @@ export const SignUp = () => {
             }),
           ]}
         >
-          <Input.Password />
+          <Input.Password autoComplete="new-password" />
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            {t('register')}
-          </Button>
-          <Button type="primary" loading>
-            {t('registering')}
-          </Button>
+          {!confirmLoading ? (
+            <Button type="primary" htmlType="submit">
+              {t('register')}
+            </Button>
+          ) : (
+            <Button type="primary" loading>
+              {t('registering')}
+            </Button>
+          )}
         </Form.Item>
       </Form>
     </>

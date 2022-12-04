@@ -10,8 +10,9 @@ import { Board } from './pages/board/board';
 import { NotFound } from './pages/not-found/not-found';
 import { Route, Routes } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
-import { Protected } from './Protected';
+import { PrivateRoute } from './PrivateRoute';
 import { Profile } from './pages/profile/profile';
+import { Start } from './pages/start/start';
 const { Content } = Layout;
 function App() {
   return (
@@ -20,12 +21,13 @@ function App() {
       <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
         <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
           <Routes>
-            <Route path="/" element={<Welcome />} />
+            <Route path="/" element={<Start />} />
+            <Route path="/welcome" element={<Welcome />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/boards" element={<Protected page={<Main />} />} />
-            <Route path="/boards/:id" element={<Protected page={<Board />} />} />
+            <Route path="/profile" element={<PrivateRoute page={<Profile />} />} />
+            <Route path="/boards" element={<PrivateRoute page={<Main />} />} />
+            <Route path="/boards/:id" element={<PrivateRoute page={<Board />} />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

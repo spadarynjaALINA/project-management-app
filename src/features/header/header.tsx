@@ -18,12 +18,12 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
-
   const userId = useAppSelector((state) => state.signIn.userId);
   const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -41,18 +41,23 @@ export const HeaderLayout = () => {
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
 
+  const onExit = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   const items: MenuProps['items'] = [
     {
-      label: <a href="https://www.antgroup.com">{t('signOut')}</a>,
+      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
       key: '0',
     },
     {
-      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+      label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
       key: '1',
     },
     {
-      label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
-      key: '3',
+      label: <p onClick={onExit}>{t('signOut')}</p>,
+      key: '2',
     },
   ];
 
@@ -73,7 +78,7 @@ export const HeaderLayout = () => {
   return (
     <>
       <Header>
-        <NavLink to="/">
+        <NavLink to="/welcome">
           <Button type="primary">
             <ArrowLeftOutlined />
             {t('home')}
@@ -86,7 +91,7 @@ export const HeaderLayout = () => {
             <Button onClick={showModal} type="primary" ghost>
               {t('newBoard')} <PlusOutlined />
             </Button>
-            <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+            <CustomModal open={open} cancel={handleCancel} footer={false} title={t('newBoard')}>
               <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
             </CustomModal>
           </>
