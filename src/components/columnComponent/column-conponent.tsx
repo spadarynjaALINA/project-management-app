@@ -6,22 +6,23 @@ import {
   CloseCircleTwoTone,
 } from '@ant-design/icons';
 import './column-component.less';
-import { Task } from '../task/task';
+import { TaskComponent } from '../task/task';
 import { t } from 'i18next';
-import { SetStateAction, useRef, useState } from 'react';
+import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
-import { CreateBoardForm } from '../createBoard';
 import Draggable from 'react-draggable';
-import Meta from 'antd/lib/card/Meta';
-import { IColumn } from '../../api-services/types/types';
-
+import { IColumn, ITask, IUser } from '../../api-services/types/types';
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
 import { sortColumn } from './utils';
-import { selectCurrentBoardId } from '../boardComponent/boardSlice';
 import { selectCurrentColumn } from './columnSlice';
-import BoardService from '../../api-services/BoardService';
+import { CreateTaskForm } from '../createTask';
+import TaskService from '../../api-services/TaskService';
+import { useLocation } from 'react-router-dom';
+import { selectCurrentTask, selectUpdateTask, tasks } from '../task/taskSlice';
+import UserService from '../../api-services/UserService';
+
 export const ColumnComponent = (props: {
   props: { boardId: string; column: IColumn; columnId: string; title: string };
 }) => {
@@ -29,45 +30,69 @@ export const ColumnComponent = (props: {
   const ed = useRef(null as unknown as HTMLDivElement);
   const title = useRef(null as unknown as HTMLDivElement);
   const column = useRef(null as unknown as HTMLDivElement);
-  const boardId = useAppSelector(selectCurrentBoardId);
+  const location = useLocation();
+  const boardId = location.pathname.slice(9);
   const columnId = props.props.columnId;
-  const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false);
   const [columnName, setColumnName] = useState(props.props.title);
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentColumn = useAppSelector(selectCurrentColumn);
+  const [taskList, setTaskList] = useState([] as ITask[]);
+  const [userList, setUserList] = useState([] as IUser[]);
+  const isUpdate = useAppSelector(selectUpdateTask);
+  const currentTask = useAppSelector(selectCurrentTask);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await TaskService.getTasks(boardId, columnId);
+      const users = await UserService.getUsers();
+      setUserList(users.data);
+      setTaskList(res.data.sort(sortColumn));
+    };
+    fetchData();
+  }, [boardId, columnId, isUpdate]);
+
+  const renderTasks = () => {
+    if (taskList) {
+      return taskList.map((task) => {
+        const user = userList.filter((i) => i.id === task.userId);
+        return <TaskComponent key={task.id} props={task} user={user[0].login}></TaskComponent>;
+      });
+    } else {
+      return '';
+    }
+  };
+
   const handleCancel = () => {
-    setOpen(false);
+    setOpenModal(false);
   };
   const closeConfirm = () => {
     setOpenConfirm(false);
   };
   const openConfirmF = () => {
-    dispatch({ type: 'currentColumnId', payload: props.props.columnId });
-    console.log(props.props);
+    dispatch({ type: 'currentColumn', payload: props.props.column });
+    dispatch({ type: 'currentBoardId', payload: props.props.boardId });
+
     setOpenConfirm(true);
   };
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
     setColumnName(e.target.value);
   };
-  const handleEdit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const handleEdit = () => {
     setEdit(true);
-    if (edit === true) {
-      console.log(ed.current);
-      // if (!ed.current.contains(e.target as Node)) {
-      //   console.log('not contain');
-      //
-      // }
-    }
   };
-  const editHandle = async () => {
-    console.log('edit');
-
+  const editHandle = async (e: React.SyntheticEvent) => {
+    e.stopPropagation();
     try {
-      await ColumnService.updateColumn(boardId, columnId, columnName, props.props.column.order);
-      const response = await BoardService.getBoards();
-      dispatch({ type: 'newBoardList', payload: response.data });
+      await ColumnService.updateColumn(
+        props.props.boardId,
+        props.props.column.id,
+        columnName,
+        props.props.column.order
+      );
+      const response = await ColumnService.getColumns(props.props.boardId);
+      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
       message.success(t('updateBoardMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -75,11 +100,14 @@ export const ColumnComponent = (props: {
       } else {
         message.error(t('noNameError'));
       }
+    } finally {
+      setEdit(false);
     }
-    setEdit(false);
   };
-  const cancelEditHandle = () => {
+  const cancelEditHandle = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
     setColumnName(props.props.title);
+    setEdit(false);
   };
   const columnTitle = () => {
     return (
@@ -89,76 +117,87 @@ export const ColumnComponent = (props: {
             <Input
               onChange={handleChange}
               autoFocus={true}
-              onBlur={() => {
-                setEdit(false);
-              }}
+              // onBlur={() => {
+              //   setEdit(false);
+              // }}
               type={'text'}
               value={columnName}
-              className="column-title"
+              className="column-title-input"
             />
             <CheckCircleTwoTone
               twoToneColor="#52c41a"
               className="check-column-icon"
               onClick={editHandle}
               ref={ed}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
             <CloseCircleTwoTone
               twoToneColor="#eb2f96"
               className="cancel-column-icon"
               onClick={cancelEditHandle}
-              style={edit ? { display: 'block' } : { display: 'none' }}
+              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
           </>
         ) : (
-          <p>{props.props.title}</p>
+          <p className="column-title">{props.props.title}</p>
         )}
       </div>
     );
   };
-  const showModal = () => {
-    setOpen(true);
+  const showModalTask = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+
+    setOpenModal(true);
   };
   const DragStartHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
     dispatch({ type: 'currentColumn', payload: column });
   };
 
-  // const DragEndHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
-  //   console.log(column, 'end');
-  // };
-
-  // const DragLeaveHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
-  //   console.log(column, 'leave');
-  // };
   const DropHandler = async (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
     e.preventDefault();
     try {
-      await ColumnService.updateColumn(
-        props.props.boardId,
-        currentColumn.id,
-        currentColumn.title,
-        column.order
-      );
-      await ColumnService.updateColumn(
-        props.props.boardId,
-        column.id,
-        column.title,
-        currentColumn.order
-      );
-      const response = await ColumnService.getColumns(props.props.boardId);
-      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      if (!!Object.keys(currentColumn).length) {
+        await ColumnService.updateColumn(
+          props.props.boardId,
+          currentColumn.id,
+          currentColumn.title,
+          column.order
+        );
+        await ColumnService.updateColumn(
+          props.props.boardId,
+          column.id,
+          column.title,
+          currentColumn.order
+        );
+        const response = await ColumnService.getColumns(props.props.boardId);
+        dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      } else {
+        const res = await ColumnService.getColumn(props.props.boardId, column.id);
+        if (!res.data.tasks?.length) {
+          await TaskService.deleteTask(currentTask.boardId!, currentTask.columnId!, currentTask.id);
+          await TaskService.createTask(
+            currentTask.userId,
+            currentTask.boardId!,
+            column.id,
+            currentTask.title,
+            currentTask.description
+          );
+          dispatch({ type: 'updateTasks' });
+        }
+      }
     } catch (e) {
       if (axios.isAxiosError(e)) {
         message.error(t('columnError'));
       } else {
         message.error(t('noNameError'));
       }
+    } finally {
+      dispatch({ type: 'currentColumn', payload: {} });
     }
   };
   return (
     <Card
       ref={column}
-      // onClick={handleEdit}
       className="column"
       title={columnTitle()}
       bordered={false}
@@ -174,45 +213,35 @@ export const ColumnComponent = (props: {
           <p>{t('deleteColumnQuestion')}</p>
         </CustomModal>,
       ]}
-      style={{ maxHeight: '72vh' }}
+      style={{ maxHeight: '74vh' }}
       hoverable={true}
       draggable={true}
       onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}
-      // onDragLeave={(e) => DragLeaveHandler(e, props.props.column)}
-      // onDragEnd={(e: React.MouseEvent<HTMLElement>) => DragEndHandler(e, props.props.column)}
       onDragOver={(e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
       }}
       onDrop={(e: React.MouseEvent<HTMLElement>) => DropHandler(e, props.props.column)}
       actions={[
-        <Button key={'new'} onClick={showModal} type="primary" ghost>
-          {t('newTask')} <PlusOutlined />
+        <>
+          <Button key={'new-task'} type="primary" ghost onClick={showModalTask}>
+            {t('newTask')} <PlusOutlined />
+          </Button>
           <CustomModal
             key={'new-modal'}
-            open={open}
+            open={openModal}
             cancel={handleCancel}
             footer={false}
             title={t('newTask')}
           >
-            <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+            <CreateTaskForm
+              cancel={handleCancel}
+              data={{ title: '', description: '', boardId, columnId }}
+            />
           </CustomModal>
-        </Button>,
+        </>,
       ]}
     >
-      <div className="tasks-wrap">
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-        <Task description={'task1'} />
-        <Task description={'task2'} />
-      </div>
+      <div className="tasks-wrap">{renderTasks()}</div>
     </Card>
   );
 };

@@ -15,6 +15,9 @@ export const BoardComponent = (props: {
   const board = useRef(null as unknown as HTMLDivElement);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+
   const handleClick = (e: React.SyntheticEvent) => {
     dispatch({ type: 'currentBoardId', payload: props.props.boardId });
     if (
@@ -44,6 +47,7 @@ export const BoardComponent = (props: {
       },
     });
   };
+
   const showConfirm = () => {
     setOpenConfirm(true);
   };

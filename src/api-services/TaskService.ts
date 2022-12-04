@@ -9,10 +9,24 @@ export default class TaskService {
   static getTask(boardId: string, columnId: string, taskId: string): Promise<AxiosResponse<ITask>> {
     return api.get<ITask>(`/boards/${boardId}/columns/${columnId}/tasks/${taskId}`);
   }
-  static createTask(userId: string, boardId: string, columnId: string, title: string, description: string): Promise<AxiosResponse<ITask>> {
-    return api.post<ITask>(`/boards/${boardId}/columns/${columnId}/tasks`, { userId, title, description });
+  static createTask(
+    userId: string,
+    boardId: string,
+    columnId: string,
+    title: string,
+    description: string
+  ): Promise<AxiosResponse<ITask>> {
+    return api.post<ITask>(`/boards/${boardId}/columns/${columnId}/tasks`, {
+      userId,
+      title,
+      description,
+    });
   }
-  static deleteTask(boardId: string, columnId: string, taskId: string): Promise<AxiosResponse<ITask>> {
+  static deleteTask(
+    boardId: string,
+    columnId: string,
+    taskId: string
+  ): Promise<AxiosResponse<ITask>> {
     return api.delete<ITask>(`/boards/${boardId}/columns/${columnId}/tasks/${taskId}`);
   }
 
@@ -25,6 +39,13 @@ export default class TaskService {
     description: string,
     order: number
   ): Promise<AxiosResponse<ITask>> {
-    return api.put<ITask>(`/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, { title, order, description, boardId, userId });
+    return api.put<ITask>(`/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
+      title,
+      order,
+      description,
+      boardId,
+      userId,
+      columnId,
+    });
   }
 }

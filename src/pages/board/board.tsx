@@ -1,13 +1,6 @@
 import { Button } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import BoardService from '../../api-services/BoardService';
-import { BoardComponent } from '../../components/boardComponent/boardComponent';
-import {
-  selectBoardList,
-  selectBoardModalData,
-  selectCurrentBoardId,
-} from '../../components/boardComponent/boardSlice';
 import { ColumnComponent } from '../../components/columnComponent/column-conponent';
 import {
   selectColumnModalData,
@@ -17,11 +10,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { PlusOutlined } from '@ant-design/icons';
 import './board.less';
 import { CustomModal } from '../../features/modal/modal';
-import { CreateBoardForm } from '../../components/createBoard';
 import { CreateColumnForm } from '../../components/createColumn';
 import ColumnService from '../../api-services/ColumnService';
 import { useLocation } from 'react-router-dom';
 import { sortColumn } from '../../components/columnComponent/utils';
+import { selectTaskModalData } from '../../components/task/taskSlice';
 
 export const Board = () => {
   const { t } = useTranslation();
@@ -30,6 +23,7 @@ export const Board = () => {
   const id = location.pathname.slice(9);
   const columnsList = useAppSelector(selectColumnsList);
   const columnData = useAppSelector(selectColumnModalData);
+  const taskData = useAppSelector(selectTaskModalData);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +31,7 @@ export const Board = () => {
       dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
     };
     fetchData();
-  }, [dispatch, columnData, id]);
+  }, [dispatch, columnData, taskData, id]);
 
   const renderColumns = () => {
     return columnsList.map((column) => (

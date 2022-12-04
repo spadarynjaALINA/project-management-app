@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import ColumnService from '../api-services/ColumnService';
 import { IColumn } from '../api-services/types/types';
-import { useAppSelector, useAppDispatch } from '../hooks';
-import { selectCurrentBoardId } from './boardComponent/boardSlice';
+import { useAppDispatch } from '../hooks';
 
 export const CreateColumnForm = (props: { cancel: () => void; data: { title: string } }) => {
   const location = useLocation();
