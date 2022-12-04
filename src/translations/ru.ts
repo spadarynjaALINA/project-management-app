@@ -1,6 +1,6 @@
 export const TRANSLATIONS_RU = {
   welcome: 'Добро пожаловать',
-  home: 'Назад',
+  home: 'Домой',
   mainPage: 'Страница досок',
   newBoard: 'Новая доска',
   searchTasks: 'поиск задач',
@@ -54,4 +54,6 @@ export const TRANSLATIONS_RU = {
   team: 'Команда',
   learnMore: 'Узнать больше',
   h1: 'Управляй своим проектом легко!',
+  notFoundTitle: 'Не расстраивайся',
+  notFoundDesc: 'это всего лишь 404...',
 };

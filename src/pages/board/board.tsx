@@ -57,7 +57,7 @@ export const Board = () => {
         <NavLink to="/boards">
           <Button type="primary" style={{ marginRight: 20 }}>
             <ArrowLeftOutlined />
-            {t('home')}
+            {t('back')}
           </Button>
         </NavLink>
         <Button onClick={showModal} className="new-column-btn">

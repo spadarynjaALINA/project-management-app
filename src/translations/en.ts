@@ -1,6 +1,6 @@
 export const TRANSLATIONS_EN = {
   welcome: 'Welcome',
-  home: 'Back',
+  home: 'Home',
   mainPage: 'Boards page',
   newBoard: 'New board',
   searchTasks: 'search tasks',
@@ -53,4 +53,6 @@ export const TRANSLATIONS_EN = {
   team: 'Team',
   learnMore: 'Learn more',
   h1: 'Manage your project easily!',
+  notFoundTitle: "Don't worry",
+  notFoundDesc: "it's just a 404...",
 };
