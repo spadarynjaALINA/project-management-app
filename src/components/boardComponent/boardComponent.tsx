@@ -84,7 +84,7 @@ export const BoardComponent = (props: {
           <p>Are you really want to delete this board?</p>
         </CustomModal>,
       ]}
-      style={{ width: 250 }}
+      style={{ width: 250, maxHeight: '70vh', overflow: 'hidden' }}
     >
       {props.props.description || ''}
     </Card>

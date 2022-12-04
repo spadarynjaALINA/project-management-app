@@ -203,7 +203,7 @@ export const ColumnComponent = (props: {
           <p>Are you really want to delete this column?</p>
         </CustomModal>,
       ]}
-      style={{ maxHeight: '74vh' }}
+      style={{ maxHeight: '64vh' }}
       hoverable={true}
       draggable={true}
       onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}

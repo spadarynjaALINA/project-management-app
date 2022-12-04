@@ -1,7 +1,7 @@
 export const TRANSLATIONS_RU = {
   welcome: 'Добро пожаловать',
-  home: 'Домой',
-  mainPage: 'На главную страницу',
+  home: 'Назад',
+  mainPage: 'Страница досок',
   newBoard: 'Новая доска',
   searchTasks: 'поиск задач',
   signIn: 'Войти',

@@ -81,60 +81,59 @@ export const HeaderLayout = () => {
   return (
     <>
       <Header className={scrolled} style={{ height: height }}>
-        <NavLink to="/">
-          <Button type="primary">
-            <ArrowLeftOutlined />
-            {t('home')}
-          </Button>
-        </NavLink>
-        <PandaIcon style={{ fontSize: '32px' }} />
-
-        {isAuth && (
-          <>
-            <Button onClick={showModal} type="primary" ghost>
-              {t('newBoard')} <PlusOutlined />
-            </Button>
-            <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
-              <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
-            </CustomModal>
-          </>
-        )}
-
-        {isAuth && (
-          <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
-        )}
-        {isAuth ? (
-          <NavLink to="/boards">
-            <Button type="text" style={{ color: 'white' }}>
-              {t('mainPage')}
-            </Button>
+        <div className="logo-wrap">
+          <NavLink to="/" className="logo">
+            <PandaIcon style={{ fontSize: '48px' }} />
           </NavLink>
-        ) : (
-          <div>
-            <NavLink to="/signup">
-              <Button type="text" style={{ color: 'white' }}>
-                {t('signUp')}
+          {isAuth && (
+            <div className="boards-block">
+              <NavLink to="/boards">
+                <Button type="primary" style={{ color: 'white', marginRight: 20 }}>
+                  {t('mainPage')}
+                </Button>
+              </NavLink>
+              <Button onClick={showModal} type="primary" ghost>
+                {t('newBoard')} <PlusOutlined />
               </Button>
-            </NavLink>
-            <Divider type="vertical" style={{ background: 'white' }} />
-            <NavLink to="/signin">
-              <Button type="text" style={{ color: 'white' }}>
-                {t('signIn')}
-              </Button>
-            </NavLink>
-          </div>
-        )}
-        <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
-        {isAuth && (
-          <Dropdown menu={{ items }} trigger={['click']}>
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                <Avatar size={48}>{userName}</Avatar>
-                <DownOutlined />
-              </Space>
-            </a>
-          </Dropdown>
-        )}
+              <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+                <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+              </CustomModal>
+            </div>
+          )}
+        </div>
+
+        <div className="auth-wrap">
+          {isAuth && (
+            <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
+          )}
+          {!isAuth && (
+            <div>
+              <NavLink to="/signup">
+                <Button type="text" style={{ color: 'white' }}>
+                  {t('signUp')}
+                </Button>
+              </NavLink>
+              <Divider type="vertical" style={{ background: 'white' }} />
+              <NavLink to="/signin">
+                <Button type="text" style={{ color: 'white' }}>
+                  {t('signIn')}
+                </Button>
+              </NavLink>
+            </div>
+          )}
+
+          <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
+          {isAuth && (
+            <Dropdown menu={{ items }} trigger={['click']}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <Avatar size={48}>{userName}</Avatar>
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          )}
+        </div>
       </Header>
     </>
   );

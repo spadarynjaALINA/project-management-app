@@ -19,7 +19,7 @@ function App() {
   const style =
     address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
-    address === '' ? { padding: '0', minHeight: '80vh' } : { padding: '24px', minHeight: '80vh' };
+    address === '' ? { padding: '0', minHeight: '75vh' } : { padding: '24px', minHeight: '75vh' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <HeaderLayout />
