@@ -5,8 +5,10 @@ import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
 import BoardService from '../../api-services/BoardService';
 import ColumnService from '../../api-services/ColumnService';
+import TaskService from '../../api-services/TaskService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
 import { selectCurrentColumn } from '../../components/columnComponent/columnSlice';
+import { selectCurrentTask } from '../../components/task/taskSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 export const CustomModal: React.FC<{
@@ -28,6 +30,7 @@ export const CustomModal: React.FC<{
   const draggleRef = useRef<HTMLDivElement>(null);
   const boardId = useAppSelector(selectCurrentBoardId);
   const column = useAppSelector(selectCurrentColumn);
+  const task = useAppSelector(selectCurrentTask);
   const dispatch = useAppDispatch();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
@@ -62,10 +65,25 @@ export const CustomModal: React.FC<{
       case 'Delete column':
         try {
           setConfirmLoading(true);
-          console.log(boardId, column.id);
           await ColumnService.deleteColumn(boardId, column.id);
           const response = await ColumnService.getColumns(boardId);
           dispatch({ type: 'newColumnsList', payload: response.data });
+          setConfirmLoading(false);
+        } catch (e) {
+          if (axios.isAxiosError(e)) {
+            console.log(e.response?.data?.message);
+          } else {
+            console.log(e);
+          }
+        } finally {
+          dispatch({ type: 'currentColumn', payload: {} });
+        }
+        break;
+      case 'Delete task':
+        try {
+          setConfirmLoading(true);
+          await TaskService.deleteTask(task.boardId as string, task.columnId as string, task.id);
+          dispatch({ type: 'updateTasks' });
           setConfirmLoading(false);
         } catch (e) {
           if (axios.isAxiosError(e)) {

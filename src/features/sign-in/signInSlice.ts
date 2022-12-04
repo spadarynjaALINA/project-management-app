@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppDispatch } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 
 export interface IAuth {
   userId: string;
@@ -22,3 +22,4 @@ export const signInSlice = createSlice({
 export const setAuthData = (userId: string, login: string) => async (dispatch: AppDispatch) => {
   dispatch(signInSlice.actions.setAuthData({ userId, login }));
 };
+export const selectUserId = (state: RootState) => state.signIn.userId;
