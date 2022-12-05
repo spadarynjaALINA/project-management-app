@@ -1,15 +1,20 @@
-import { Button, Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import axios from 'axios';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
+import { useTranslation } from 'react-i18next';
 import BoardService from '../../api-services/BoardService';
 import ColumnService from '../../api-services/ColumnService';
+import UserService from '../../api-services/UserService';
 import TaskService from '../../api-services/TaskService';
 import { selectCurrentBoardId } from '../../components/boardComponent/boardSlice';
 import { selectCurrentColumn } from '../../components/columnComponent/columnSlice';
 import { selectCurrentTask } from '../../components/task/taskSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import jwt_decode from 'jwt-decode';
+import { IAuth } from '../sign-in/signInSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const CustomModal: React.FC<{
   open: boolean;
@@ -28,10 +33,12 @@ export const CustomModal: React.FC<{
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const [confirmLoading, setConfirmLoading] = useState(false);
   const draggleRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   const boardId = useAppSelector(selectCurrentBoardId);
   const column = useAppSelector(selectCurrentColumn);
   const task = useAppSelector(selectCurrentTask);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -47,34 +54,56 @@ export const CustomModal: React.FC<{
   };
   const deleteItem = async () => {
     switch (props.title) {
-      case 'Delete board':
+      case t('deleteBoard'):
         try {
           setConfirmLoading(true);
           await BoardService.deleteBoard(boardId);
           const response = await BoardService.getBoards();
           dispatch({ type: 'newBoardList', payload: response.data });
+          message.success(t('deleteBoardMsg'));
           setConfirmLoading(false);
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            console.log(e.response?.data?.message);
+            message.error(t('boardError'));
           } else {
-            console.log(e);
+            message.error(t('noNameError'));
           }
         }
         break;
-      case 'Delete column':
+      case t('deleteColumn'):
         try {
           setConfirmLoading(true);
           await ColumnService.deleteColumn(boardId, column.id);
           const response = await ColumnService.getColumns(boardId);
           dispatch({ type: 'newColumnsList', payload: response.data });
+          message.success(t('deleteColumnMsg'));
           setConfirmLoading(false);
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            console.log(e.response?.data?.message);
+            message.error(t('columnError'));
           } else {
-            console.log(e);
+            message.error(t('noNameError'));
           }
+        }
+        break;
+      case t('deleteUser'):
+        try {
+          setConfirmLoading(true);
+          const token = localStorage.getItem('token') as string;
+          const { userId } = jwt_decode(token) as IAuth;
+          await UserService.deleteUser(userId);
+          localStorage.removeItem('token');
+          message.success(t('deleteUserMsg'));
+          setConfirmLoading(false);
+          navigate('/');
+        } catch (e) {
+          if (axios.isAxiosError(e)) {
+            message.error(t('signinError'));
+          } else {
+            message.error(t('noNameError'));
+          }
+        } finally {
+          dispatch({ type: 'currentColumn', payload: {} });
         }
         break;
       case 'Delete task':
@@ -123,10 +152,10 @@ export const CustomModal: React.FC<{
         props.footer
           ? [
               <Button key="back" onClick={props.cancel}>
-                Cancel
+                {t('cancel')}
               </Button>,
               <Button key="yes" type="primary" onClick={deleteItem} loading={confirmLoading}>
-                Yes
+                {t('yes')}
               </Button>,
             ]
           : false

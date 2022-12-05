@@ -18,7 +18,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const { t } = useTranslation();
-
   const userId = useAppSelector((state) => state.signIn.userId);
   const dispatch = useAppDispatch();
   const [userName, setUserName] = useState('');
@@ -27,6 +26,7 @@ export const HeaderLayout = () => {
   const scrolled = scroll ? 'header scrolled' : 'header';
   const height = scroll ? '64px' : '70px';
   const navigate = useNavigate();
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -44,18 +44,23 @@ export const HeaderLayout = () => {
   const onChange = (checked: boolean) =>
     checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
 
+  const onExit = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   const items: MenuProps['items'] = [
     {
-      label: <a href="https://www.antgroup.com">{t('signOut')}</a>,
+      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
       key: '0',
     },
     {
-      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+      label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
       key: '1',
     },
     {
-      label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
-      key: '3',
+      label: <p onClick={onExit}>{t('signOut')}</p>,
+      key: '2',
     },
   ];
 
@@ -79,10 +84,12 @@ export const HeaderLayout = () => {
 
   return (
     <>
+
       <Header className={scrolled} style={{ height: height }}>
         <div className="logo-wrap">
           <NavLink to="/" className="logo">
             <PandaIcon style={{ fontSize: '48px' }} />
+
           </NavLink>
           {isAuth && (
             <div className="boards-block">

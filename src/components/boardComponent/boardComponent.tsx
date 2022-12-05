@@ -5,6 +5,7 @@ import { CustomModal } from '../../features/modal/modal';
 import { CreateBoardForm } from '../createBoard';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const BoardComponent = (props: {
   props: { boardId: string; title: string; description: string };
@@ -26,7 +27,9 @@ export const BoardComponent = (props: {
     )
       navigate(`/boards/:${props.props.boardId}`);
   };
-
+  const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const { t } = useTranslation();
   const handleCancel = () => {
     setOpen(false);
   };
@@ -64,7 +67,7 @@ export const BoardComponent = (props: {
           open={open}
           cancel={handleCancel}
           footer={false}
-          title={'Edit board'}
+          title={t('editBoard')}
         >
           <CreateBoardForm
             cancel={handleCancel}
@@ -79,9 +82,9 @@ export const BoardComponent = (props: {
           open={openConfirm}
           cancel={closeConfirm}
           footer={true}
-          title={'Delete board'}
+          title={t('deleteBoard')}
         >
-          <p>Are you really want to delete this board?</p>
+          <p>{t('deleteBoardQuestion')}</p>
         </CustomModal>,
       ]}
       style={{ width: 250, maxHeight: '70vh', overflow: 'hidden' }}

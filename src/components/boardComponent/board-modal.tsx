@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Modal, Form, Input } from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import { EditOutlined } from '@ant-design/icons';
@@ -31,7 +30,6 @@ export const BoardModal: React.FC<{
   };
   const titleMsg = t('titleMsg');
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
     dispatch({ type: 'isBoardModalAction', payload: false });
   };
   const onFinish = async (values: IBoard) => {
@@ -45,15 +43,17 @@ export const BoardModal: React.FC<{
       if (!!Object.values(data.data).filter((elem) => elem !== '').length) {
         const response = await BoardService.updateBoard(boardId, values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('updateBoardMsg'));
       } else {
         const response = await BoardService.createBoard(values.title, values.description);
         dispatch({ type: 'boardModalDataAction', payload: response.data });
+        message.success(t('createBoardMsg'));
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('boardError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false); // moved here
@@ -61,9 +61,6 @@ export const BoardModal: React.FC<{
     }
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
   const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -139,7 +136,6 @@ export const BoardModal: React.FC<{
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="on"
         >
           <Form.Item

@@ -48,7 +48,7 @@ export const Main = () => {
         {t('newBoard')}
         <PlusOutlined />
       </Button>
-      <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+      <CustomModal open={open} cancel={handleCancel} footer={false} title={t('newBoard')}>
         <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
       </CustomModal>
       {renderBoards()}

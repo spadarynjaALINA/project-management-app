@@ -1,4 +1,4 @@
-import { Button, Card, Input } from 'antd';
+import { Button, Card, Input, message } from 'antd';
 import {
   CheckCircleTwoTone,
   PlusOutlined,
@@ -20,7 +20,7 @@ import { selectCurrentColumn } from './columnSlice';
 import { CreateTaskForm } from '../createTask';
 import TaskService from '../../api-services/TaskService';
 import { useLocation } from 'react-router-dom';
-import { selectUpdateTask } from '../task/taskSlice';
+import { selectCurrentTask, selectUpdateTask, tasks } from '../task/taskSlice';
 import UserService from '../../api-services/UserService';
 
 export const ColumnComponent = (props: {
@@ -42,12 +42,14 @@ export const ColumnComponent = (props: {
   const [taskList, setTaskList] = useState([] as ITask[]);
   const [userList, setUserList] = useState([] as IUser[]);
   const isUpdate = useAppSelector(selectUpdateTask);
+  const currentTask = useAppSelector(selectCurrentTask);
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await TaskService.getTasks(boardId, columnId);
       const users = await UserService.getUsers();
       setUserList(users.data);
-      setTaskList(res.data);
+      setTaskList(res.data.sort(sortColumn));
     };
     fetchData();
   }, [boardId, columnId, isUpdate]);
@@ -91,13 +93,13 @@ export const ColumnComponent = (props: {
         props.props.column.order
       );
       const response = await ColumnService.getColumns(props.props.boardId);
-
       dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      message.success(t('updateBoardMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setEdit(false);
@@ -108,7 +110,6 @@ export const ColumnComponent = (props: {
     setColumnName(props.props.title);
     setEdit(false);
   };
-  // console.log(edit);
   const columnTitle = () => {
     return (
       <div className="title-wrap" onClick={handleEdit} ref={title}>
@@ -153,42 +154,51 @@ export const ColumnComponent = (props: {
     dispatch({ type: 'currentColumn', payload: column });
   };
 
-  // const DragEndHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
-  //   console.log(column, 'end');
-  // };
-
-  // const DragLeaveHandler = (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
-  //   console.log(column, 'leave');
-  // };
   const DropHandler = async (e: React.MouseEvent<HTMLElement>, column: IColumn) => {
     e.preventDefault();
     try {
-      await ColumnService.updateColumn(
-        props.props.boardId,
-        currentColumn.id,
-        currentColumn.title,
-        column.order
-      );
-      await ColumnService.updateColumn(
-        props.props.boardId,
-        column.id,
-        column.title,
-        currentColumn.order
-      );
-      const response = await ColumnService.getColumns(props.props.boardId);
-      dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      if (!!Object.keys(currentColumn).length) {
+        await ColumnService.updateColumn(
+          props.props.boardId,
+          currentColumn.id,
+          currentColumn.title,
+          column.order
+        );
+        await ColumnService.updateColumn(
+          props.props.boardId,
+          column.id,
+          column.title,
+          currentColumn.order
+        );
+        const response = await ColumnService.getColumns(props.props.boardId);
+        dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
+      } else {
+        const res = await ColumnService.getColumn(props.props.boardId, column.id);
+        if (!res.data.tasks?.length) {
+          await TaskService.deleteTask(currentTask.boardId!, currentTask.columnId!, currentTask.id);
+          await TaskService.createTask(
+            currentTask.userId,
+            currentTask.boardId!,
+            column.id,
+            currentTask.title,
+            currentTask.description
+          );
+          dispatch({ type: 'updateTasks' });
+        }
+      }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('columnError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
+    } finally {
+      dispatch({ type: 'currentColumn', payload: {} });
     }
   };
   return (
     <Card
       ref={column}
-      // onClick={handleEdit}
       className="column"
       title={columnTitle()}
       bordered={false}
@@ -199,17 +209,15 @@ export const ColumnComponent = (props: {
           open={openConfirm}
           cancel={closeConfirm}
           footer={true}
-          title={'Delete column'}
+          title={t('deleteColumn')}
         >
-          <p>Are you really want to delete this column?</p>
+          <p>{t('deleteColumnQuestion')}</p>
         </CustomModal>,
       ]}
       style={{ maxHeight: '64vh' }}
       hoverable={true}
       draggable={true}
       onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}
-      // onDragLeave={(e) => DragLeaveHandler(e, props.props.column)}
-      // onDragEnd={(e: React.MouseEvent<HTMLElement>) => DragEndHandler(e, props.props.column)}
       onDragOver={(e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
       }}
@@ -224,7 +232,7 @@ export const ColumnComponent = (props: {
             open={openModal}
             cancel={handleCancel}
             footer={false}
-            title={'New task'}
+            title={t('newTask')}
           >
             <CreateTaskForm
               cancel={handleCancel}
