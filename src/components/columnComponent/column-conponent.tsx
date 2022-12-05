@@ -93,7 +93,7 @@ export const ColumnComponent = (props: {
       );
       const response = await ColumnService.getColumns(props.props.boardId);
       dispatch({ type: 'newColumnsList', payload: response.data.sort(sortColumn) });
-      message.success(t('updateBoardMsg'));
+      message.success(t('updateColumnMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
         message.error(t('columnError'));

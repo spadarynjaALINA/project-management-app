@@ -67,7 +67,7 @@ export const Board = () => {
       </div>
 
       <div className="inner-wrap">
-        <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Column'}>
+        <CustomModal open={open} cancel={handleCancel} footer={false} title={t('newColumn')}>
           <CreateColumnForm cancel={handleCancel} data={{ title: '' }} />
         </CustomModal>
         {renderColumns()}

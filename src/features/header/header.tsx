@@ -120,13 +120,13 @@ export const HeaderLayout = () => {
             <div>
               <NavLink to="/signup">
                 <Button type="text" style={{ color: 'white' }}>
-                  {!matches ? <UserAddOutlined /> : t('signUp')}
+                  {matches ? <UserAddOutlined /> : t('signUp')}
                 </Button>
               </NavLink>
               <Divider type="vertical" style={{ background: 'white' }} />
               <NavLink to="/signin">
                 <Button type="text" style={{ color: 'white' }}>
-                  {!matches ? <span className="signin-span" /> : t('signIn')}
+                  {matches ? <span className="signin-span" /> : t('signIn')}
                 </Button>
               </NavLink>
             </div>

@@ -24,21 +24,18 @@ export const BoardModal: React.FC<{
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const titleInvalidMsg = t('titleInvalidMsg');
+  const descriptionMsg = t('descriptionMsg');
+  const titleMsg = t('titleMsg');
   const showModal = () => {
     dispatch({ type: 'isBoardModalAction', payload: true });
     dispatch({ type: 'currentData', payload: props });
   };
-  const titleMsg = t('titleMsg');
   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
     dispatch({ type: 'isBoardModalAction', payload: false });
   };
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
-    // setTimeout(() => {
-    //   dispatch({ type: 'isBoardModalAction', payload: false });
-    //   setConfirmLoading(false);
-    // }, 2000);
-    // console.log('Success:', values.description);
     try {
       if (!!Object.values(data.data).filter((elem) => elem !== '').length) {
         const response = await BoardService.updateBoard(boardId, values.title, values.description);
@@ -107,8 +104,6 @@ export const BoardModal: React.FC<{
             onMouseOut={() => {
               setDisabled(true);
             }}
-            // fix eslintjsx-a11y/mouse-events-have-key-events
-            // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
             onFocus={() => {}}
             onBlur={() => {}}
             // end
@@ -116,7 +111,6 @@ export const BoardModal: React.FC<{
             {t('newBoard')}
           </div>
         }
-        // open={open}
         footer={false}
         onCancel={handleCancel}
         confirmLoading={confirmLoading}
@@ -141,11 +135,18 @@ export const BoardModal: React.FC<{
           <Form.Item
             label={t('title')}
             name="title"
-            rules={[{ required: true, message: titleMsg }]}
+            rules={[
+              { required: true, whitespace: true, message: titleMsg },
+              { max: 20, message: titleInvalidMsg },
+            ]}
           >
             <Input value={data.data.title} />
           </Form.Item>
-          <Form.Item label={t('description')} name="description">
+          <Form.Item
+            label={t('description')}
+            name="description"
+            rules={[{ required: true, whitespace: true, message: descriptionMsg }]}
+          >
             <Input value={data.data.description} />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

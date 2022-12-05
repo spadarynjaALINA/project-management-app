@@ -27,7 +27,6 @@ function App() {
         const iat = (jwtDecode<JwtPayload>(token)?.iat as number) * 1000;
         const timeout = 1000 * 60 * 60 * 1;
         const expTime = decoded.exp ? dateNow - decoded.exp * 1000 : timeout - (dateNow - iat);
-        console.log(expTime);
         const timer = setTimeout(() => {
           localStorage.removeItem('token');
           navigate('/welcome');
@@ -41,9 +40,9 @@ function App() {
   const address = location.pathname.slice(9);
   const boards = location.pathname.slice(0, 7);
   const style =
-    address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
+    address === '' ? { padding: '0', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
-    address === '' ? { padding: '0', minHeight: '75vh' } : { padding: '24px', minHeight: '75vh' };
+    address === '' ? { padding: '0', height: '100%' } : { padding: '24px', height: '100%' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {(location.pathname === '/' ||
