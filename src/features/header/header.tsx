@@ -26,7 +26,7 @@ export const HeaderLayout = () => {
   const scrolled = scroll ? 'header scrolled' : 'header';
   const height = scroll ? '64px' : '70px';
   const navigate = useNavigate();
-
+  const checked = localStorage.getItem('i18nextLng') === 'en';
   const handleCancel = () => {
     setOpen(false);
   };
@@ -41,8 +41,15 @@ export const HeaderLayout = () => {
 
   const onSearch = (value: string) => console.log(value);
 
-  const onChange = (checked: boolean) =>
-    checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
+  const onChange = (checked: boolean) => {
+    if (checked) {
+      i18n.changeLanguage('en');
+      localStorage.setItem('i18nextLng', 'en');
+    } else {
+      i18n.changeLanguage('ru');
+      localStorage.setItem('i18nextLng', 'ru');
+    }
+  };
 
   const onExit = () => {
     localStorage.removeItem('token');
@@ -126,7 +133,12 @@ export const HeaderLayout = () => {
             </div>
           )}
 
-          <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
+          <Switch
+            checkedChildren="EN"
+            unCheckedChildren="Ру"
+            defaultChecked={checked}
+            onChange={onChange}
+          />
           {isAuth && (
             <Dropdown menu={{ items }} trigger={['click']}>
               <a onClick={(e) => e.preventDefault()}>

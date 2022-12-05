@@ -8,13 +8,35 @@ import './App.less';
 import { Main } from './pages/main/main';
 import { Board } from './pages/board/board';
 import { NotFound } from './pages/not-found/not-found';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { PrivateRoute } from './PrivateRoute';
 import { Profile } from './pages/profile/profile';
 import { Start } from './pages/start/start';
+import { useEffect } from 'react';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 const { Content } = Layout;
 function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const tokenCheck = () => {
+      const token = localStorage.getItem('token') as string;
+      if (token) {
+        const dateNow = new Date().getTime();
+        const decoded = jwtDecode<JwtPayload>(token);
+        const iat = (jwtDecode<JwtPayload>(token)?.iat as number) * 1000;
+        const timeout = 1000 * 60 * 60 * 1;
+        const expTime = decoded.exp ? dateNow - decoded.exp * 1000 : timeout - (dateNow - iat);
+        console.log(expTime);
+        const timer = setTimeout(() => {
+          localStorage.removeItem('token');
+          navigate('/welcome');
+        }, expTime);
+        return () => clearTimeout(timer);
+      }
+    };
+    tokenCheck();
+  });
   const location = useLocation();
   const address = location.pathname.slice(9);
   const boards = location.pathname.slice(0, 7);

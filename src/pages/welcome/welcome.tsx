@@ -7,9 +7,18 @@ import './welcome.less';
 export const Welcome = () => {
   const { t } = useTranslation();
   const developers = [
-    { name: t('alina'), description: 'some description here' },
-    { name: t('andrei'), description: 'some description here' },
-    { name: t('kristina'), description: 'some description here' },
+    {
+      name: t('alina'),
+      description: [t('alinaDesc1'), t('alinaDesc2'), t('alinaDesc3'), t('alinaDesc4')],
+    },
+    {
+      name: t('andrei'),
+      description: [t('andreiDesc1'), t('andreiDesc2'), t('andreiDesc3'), t('andreiDesc4')],
+    },
+    {
+      name: t('kristina'),
+      description: [t('kristinaDesc1'), t('kristinaDesc2'), t('kristinaDesc3'), t('kristinaDesc4')],
+    },
   ];
   const appDescriptions = [
     { title: t('localization'), description: t('localizationDesc') },
@@ -38,7 +47,11 @@ export const Welcome = () => {
     return developers.map((developer) => {
       return (
         <Card className="dev-card" hoverable={true} key={developer.name} title={developer.name}>
-          {developer.description}
+          <ul>
+            {developer.description.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
         </Card>
       );
     });
