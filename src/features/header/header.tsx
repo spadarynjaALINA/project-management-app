@@ -3,7 +3,7 @@ import { Header } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, PlusOutlined, UserAddOutlined, ExportOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, UserAddOutlined, MenuOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
@@ -54,28 +54,46 @@ export const HeaderLayout = () => {
     navigate('/');
   };
 
-  const items: MenuProps['items'] = [
-    {
-      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
-      key: '0',
-    },
-    {
-      label: <a href="#">{t('tasks')}</a>,
-      key: '1',
-    },
-    {
-      label: <p onClick={onExit}>{t('signOut')}</p>,
-      key: '2',
-    },
-  ];
-
+  const items: MenuProps['items'] = !matches
+    ? [
+        {
+          label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+          key: '0',
+        },
+        {
+          label: <a href="#">{t('tasks')}</a>,
+          key: '1',
+        },
+        {
+          label: <p onClick={onExit}>{t('signOut')}</p>,
+          key: '2',
+        },
+      ]
+    : [
+        {
+          label: <p onClick={() => navigate('/boards')}>{t('mainPage')}</p>,
+          key: '0',
+        },
+        {
+          label: <p onClick={() => showModal()}>{t('newBoard')}</p>,
+          key: '1',
+        },
+        {
+          label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+          key: '2',
+        },
+        {
+          label: <p onClick={onExit}>{t('signOut')}</p>,
+          key: '3',
+        },
+      ];
   useEffect(() => {
     const onScroll = () => {
       window.pageYOffset === 0 ? setScroll(false) : setScroll(true);
     };
     window.addEventListener('scroll', onScroll);
     window
-      .matchMedia('(min-width: 550px)')
+      .matchMedia('(max-width: 550px)')
       .addEventListener('change', (e) => setMatches(e.matches));
     const token = localStorage.getItem('token');
     if (token) {
@@ -108,9 +126,6 @@ export const HeaderLayout = () => {
               <Button onClick={showModal} type="primary" ghost>
                 {t('newBoard')} <PlusOutlined />
               </Button>
-              <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
-                <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
-              </CustomModal>
             </div>
           )}
         </div>
@@ -128,10 +143,12 @@ export const HeaderLayout = () => {
                 <Button type="text" style={{ color: 'white' }}>
                   {matches ? <span className="signin-span" /> : t('signIn')}
                 </Button>
-              </NavLink>
+              </NavLink>{' '}
             </div>
           )}
-
+          <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+            <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+          </CustomModal>
           <Switch
             checkedChildren="EN"
             unCheckedChildren="Ру"
@@ -142,8 +159,14 @@ export const HeaderLayout = () => {
             <Dropdown menu={{ items }} trigger={['click']}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <Avatar size={48}>{userName}</Avatar>
-                  <DownOutlined />
+                  {matches ? (
+                    <MenuOutlined style={{ fontSize: 48, marginTop: 16 }} />
+                  ) : (
+                    <>
+                      <Avatar size={48}>{userName}</Avatar>
+                      <DownOutlined />
+                    </>
+                  )}
                 </Space>
               </a>
             </Dropdown>

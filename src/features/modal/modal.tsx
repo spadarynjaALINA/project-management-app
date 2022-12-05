@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import jwt_decode from 'jwt-decode';
 import { IAuth } from '../sign-in/signInSlice';
 import { useNavigate } from 'react-router-dom';
-
+import './modal.less';
 export const CustomModal: React.FC<{
   open: boolean;
   cancel: () => void;
