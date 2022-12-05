@@ -31,15 +31,20 @@
   margin-bottom: 20px;
 }
 .columns-inner-wrap {
-  width: 'fit-content';
-  gap: '20px';
-  height: '100%';
-  display: 'flex';
-  flex-direction: 'row';
-  flex-grow: '1';
+  width: fit-content;
+  gap: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
 }
 @media screen and (max-width: 700px) {
   .inner-wrap {
     align-items: center;
+  }
+}
+@media screen and (max-width: 440px) {
+  .columns-wrap {
+    height: calc(100vh - 315px);
   }
 }

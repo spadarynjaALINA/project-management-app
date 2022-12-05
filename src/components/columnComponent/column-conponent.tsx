@@ -117,9 +117,6 @@ export const ColumnComponent = (props: {
             <Input
               onChange={handleChange}
               autoFocus={true}
-              // onBlur={() => {
-              //   setEdit(false);
-              // }}
               type={'text'}
               value={columnName}
               className="column-title-input"
@@ -129,13 +126,11 @@ export const ColumnComponent = (props: {
               className="check-column-icon"
               onClick={editHandle}
               ref={ed}
-              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
             <CloseCircleTwoTone
               twoToneColor="#eb2f96"
               className="cancel-column-icon"
               onClick={cancelEditHandle}
-              // style={edit ? { display: 'block' } : { display: 'none' }}
             />
           </>
         ) : (
