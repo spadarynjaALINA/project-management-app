@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +68,7 @@ export const Profile = () => {
 
   useEffect(() => {
     getUserData();
-  }, []);
+  });
 
   const onFinish = async (values: IRegistrationData) => {
     const { userName, login, password } = values;

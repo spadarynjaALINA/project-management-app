@@ -18,7 +18,6 @@ function App() {
   const location = useLocation();
   const address = location.pathname.slice(9);
   const boards = location.pathname.slice(0, 7);
-  console.log(boards, 'boards', location.pathname, 'pathname', address, 'address');
   const style =
     address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
@@ -29,6 +28,7 @@ function App() {
         location.pathname === '/signin' ||
         location.pathname === '/signup' ||
         location.pathname === '/profile' ||
+        location.pathname === '/welcome' ||
         boards === '/boards') && <HeaderLayout />}
 
       <Content className="site-layout" style={style}>
@@ -49,6 +49,7 @@ function App() {
         location.pathname === '/signin' ||
         location.pathname === '/signup' ||
         location.pathname === '/profile' ||
+        location.pathname === '/welcome' ||
         boards === '/boards') && <FooterLayout />}
     </Layout>
   );

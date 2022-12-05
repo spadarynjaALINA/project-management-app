@@ -55,7 +55,7 @@ export const HeaderLayout = () => {
       key: '0',
     },
     {
-      label: <a href="https://www.aliyun.com">{t('tasks')}</a>,
+      label: <a href="#">{t('tasks')}</a>,
       key: '1',
     },
     {
@@ -84,12 +84,10 @@ export const HeaderLayout = () => {
 
   return (
     <>
-
       <Header className={scrolled} style={{ height: height }}>
         <div className="logo-wrap">
-          <NavLink to="/" className="logo">
+          <NavLink to="/welcome" className="logo">
             <PandaIcon style={{ fontSize: '48px' }} />
-
           </NavLink>
           {isAuth && (
             <div className="boards-block">

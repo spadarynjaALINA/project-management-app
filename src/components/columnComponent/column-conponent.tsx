@@ -11,7 +11,6 @@ import { t } from 'i18next';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { CustomModal } from '../../features/modal/modal';
-import Draggable from 'react-draggable';
 import { IColumn, ITask, IUser } from '../../api-services/types/types';
 import ColumnService from '../../api-services/ColumnService';
 import axios from 'axios';
@@ -20,7 +19,7 @@ import { selectCurrentColumn } from './columnSlice';
 import { CreateTaskForm } from '../createTask';
 import TaskService from '../../api-services/TaskService';
 import { useLocation } from 'react-router-dom';
-import { selectCurrentTask, selectUpdateTask, tasks } from '../task/taskSlice';
+import { selectCurrentTask, selectUpdateTask } from '../task/taskSlice';
 import UserService from '../../api-services/UserService';
 
 export const ColumnComponent = (props: {

@@ -27,8 +27,6 @@ export const BoardComponent = (props: {
     )
       navigate(`/boards/:${props.props.boardId}`);
   };
-  const [open, setOpen] = useState(false);
-  const [openConfirm, setOpenConfirm] = useState(false);
   const { t } = useTranslation();
   const handleCancel = () => {
     setOpen(false);
