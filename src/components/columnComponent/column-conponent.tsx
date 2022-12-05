@@ -32,6 +32,7 @@ export const ColumnComponent = (props: {
   const column = useRef(null as unknown as HTMLDivElement);
   const location = useLocation();
   const boardId = location.pathname.slice(9);
+
   const columnId = props.props.columnId;
   const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false);
@@ -213,7 +214,7 @@ export const ColumnComponent = (props: {
           <p>{t('deleteColumnQuestion')}</p>
         </CustomModal>,
       ]}
-      style={{ maxHeight: '74vh' }}
+      style={{ maxHeight: '64vh' }}
       hoverable={true}
       draggable={true}
       onDragStart={(e: React.MouseEvent<HTMLElement>) => DragStartHandler(e, props.props.column)}

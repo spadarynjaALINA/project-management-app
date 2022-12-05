@@ -8,18 +8,31 @@ import './App.less';
 import { Main } from './pages/main/main';
 import { Board } from './pages/board/board';
 import { NotFound } from './pages/not-found/not-found';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { PrivateRoute } from './PrivateRoute';
 import { Profile } from './pages/profile/profile';
 import { Start } from './pages/start/start';
 const { Content } = Layout;
 function App() {
+  const location = useLocation();
+  const address = location.pathname.slice(9);
+  const boards = location.pathname.slice(0, 7);
+  console.log(boards, 'boards', location.pathname, 'pathname', address, 'address');
+  const style =
+    address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
+  const bgStyle =
+    address === '' ? { padding: '0', minHeight: '75vh' } : { padding: '24px', minHeight: '75vh' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <HeaderLayout />
-      <Content className="site-layout" style={{ padding: '0 20px', marginTop: 64 }}>
-        <div className="site-layout-background" style={{ padding: 24, minHeight: '85vh' }}>
+      {(location.pathname === '/' ||
+        location.pathname === '/signin' ||
+        location.pathname === '/signup' ||
+        location.pathname === '/profile' ||
+        boards === '/boards') && <HeaderLayout />}
+
+      <Content className="site-layout" style={style}>
+        <div className="site-layout-background" style={bgStyle}>
           <Routes>
             <Route path="/" element={<Start />} />
             <Route path="/welcome" element={<Welcome />} />
@@ -32,7 +45,11 @@ function App() {
           </Routes>
         </div>
       </Content>
-      <FooterLayout />
+      {(location.pathname === '/' ||
+        location.pathname === '/signin' ||
+        location.pathname === '/signup' ||
+        location.pathname === '/profile' ||
+        boards === '/boards') && <FooterLayout />}
     </Layout>
   );
 }

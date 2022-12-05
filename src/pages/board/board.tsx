@@ -7,12 +7,12 @@ import {
   selectColumnsList,
 } from '../../components/columnComponent/columnSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import './board.less';
 import { CustomModal } from '../../features/modal/modal';
 import { CreateColumnForm } from '../../components/createColumn';
 import ColumnService from '../../api-services/ColumnService';
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { sortColumn } from '../../components/columnComponent/utils';
 import { selectTaskModalData } from '../../components/task/taskSlice';
 
@@ -53,10 +53,19 @@ export const Board = () => {
   };
   return (
     <div className="columns-wrap">
-      <Button onClick={showModal} className="new-column-btn">
-        {t('newColumn')}
-        <PlusOutlined />
-      </Button>
+      <div className="btn-column-wrap">
+        <NavLink to="/boards">
+          <Button type="primary" style={{ marginRight: 20 }}>
+            <ArrowLeftOutlined />
+            {t('back')}
+          </Button>
+        </NavLink>
+        <Button onClick={showModal} className="new-column-btn">
+          {t('newColumn')}
+          <PlusOutlined />
+        </Button>
+      </div>
+
       <div className="inner-wrap">
         <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Column'}>
           <CreateColumnForm cancel={handleCancel} data={{ title: '' }} />
