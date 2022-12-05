@@ -51,7 +51,7 @@ export const TRANSLATIONS_RU = {
   course_description_2:
     'JavaScript, typescript, Git, GitHub (clone, add, commit, push, pull, merge, rebase, work with Pull Request), npm, webpack, CSS3 / HTML, Chrome DevTools Figma, Понимание концепции REST API.',
   course_description_3: 'Бесплатное обучение',
-  course_btn: 'Ого! Круто, хочу присоединиться!)',
+  course_btn: 'Хочу присоединиться!',
   about: 'О приложении',
   localization: 'Локализация',
 
@@ -106,5 +106,5 @@ export const TRANSLATIONS_RU = {
   andreiDesc1: 'все API запросы',
   andreiDesc2: 'создание/обновление/удаление досок',
   andreiDesc3: 'перетаскивание колонок и задач',
-  andreiDesc4: 'логика сохранения обновленных данных после перетаскивания компонентов',
+  andreiDesc4: 'деплой сервера',
 };

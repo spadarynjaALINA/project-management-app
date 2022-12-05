@@ -41,7 +41,7 @@ export const SignIn = () => {
   };
 
   return (
-    <>
+    <div className="user-wrap">
       {localStorage.getItem('token') && <Navigate to="/boards" replace={true} />}
       <Form
         name="basic"
@@ -93,6 +93,6 @@ export const SignIn = () => {
           )}
         </Form.Item>
       </Form>
-    </>
+    </div>
   );
 };

@@ -1,10 +1,9 @@
 import { Avatar, Button, Divider, Switch } from 'antd';
-import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, UserAddOutlined, ExportOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
@@ -20,6 +19,7 @@ export const HeaderLayout = () => {
   const { t } = useTranslation();
   const userId = useAppSelector((state) => state.signIn.userId);
   const dispatch = useAppDispatch();
+  const [matches, setMatches] = useState(window.matchMedia('(max-width: 550px)').matches);
   const [userName, setUserName] = useState('');
   const [open, setOpen] = useState(false);
   const [scroll, setScroll] = useState(false);
@@ -38,8 +38,6 @@ export const HeaderLayout = () => {
       payload: { props: 'board', data: { title: '', description: '' } },
     });
   };
-
-  const onSearch = (value: string) => console.log(value);
 
   const onChange = (checked: boolean) => {
     if (checked) {
@@ -76,6 +74,9 @@ export const HeaderLayout = () => {
       window.pageYOffset === 0 ? setScroll(false) : setScroll(true);
     };
     window.addEventListener('scroll', onScroll);
+    window
+      .matchMedia('(min-width: 550px)')
+      .addEventListener('change', (e) => setMatches(e.matches));
     const token = localStorage.getItem('token');
     if (token) {
       const fetchData = async () => {
@@ -96,7 +97,8 @@ export const HeaderLayout = () => {
           <NavLink to="/welcome" className="logo">
             <PandaIcon style={{ fontSize: '48px' }} />
           </NavLink>
-          {isAuth && (
+
+          {isAuth && !matches && (
             <div className="boards-block">
               <NavLink to="/boards">
                 <Button type="primary" style={{ color: 'white', marginRight: 20 }}>
@@ -114,20 +116,17 @@ export const HeaderLayout = () => {
         </div>
 
         <div className="auth-wrap">
-          {isAuth && (
-            <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
-          )}
           {!isAuth && (
             <div>
               <NavLink to="/signup">
                 <Button type="text" style={{ color: 'white' }}>
-                  {t('signUp')}
+                  {!matches ? <UserAddOutlined /> : t('signUp')}
                 </Button>
               </NavLink>
               <Divider type="vertical" style={{ background: 'white' }} />
               <NavLink to="/signin">
                 <Button type="text" style={{ color: 'white' }}>
-                  {t('signIn')}
+                  {!matches ? <span className="signin-span" /> : t('signIn')}
                 </Button>
               </NavLink>
             </div>

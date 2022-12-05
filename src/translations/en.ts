@@ -50,7 +50,7 @@ export const TRANSLATIONS_EN = {
   course_description_2:
     'JavaScript, typescript, Git, GitHub (clone, add, commit, push, pull, merge, rebase, work with Pull Request), npm, webpack, CSS3 / HTML, Chrome DevTools Figma, Understanding the concept of REST API.',
   course_description_3: 'Learning is free.',
-  course_btn: 'Wow, cool, I want to join ',
+  course_btn: 'I want to join ',
   about: 'About app',
   localization: 'Localization',
   localizationDesc: 'Choose the language russian or english',
@@ -104,5 +104,5 @@ export const TRANSLATIONS_EN = {
   andreiDesc1: 'all API requests',
   andreiDesc2: 'create/update/delete boards',
   andreiDesc3: 'drag and drop for columns and tasks',
-  andreiDesc4: 'logic for saving components updated data after drag and drop',
+  andreiDesc4: 'server deploy',
 };

@@ -63,7 +63,7 @@ export const Welcome = () => {
           <div className="greeting-wrap">
             <h1>{t('h1')}</h1>
             <p className="title-description">{t('titleDescription')}</p>
-            <Button type="primary" size="large" href="#about">
+            <Button type="primary" size="large" href="#about" className="learn-more">
               {t('learnMore')}
             </Button>
           </div>

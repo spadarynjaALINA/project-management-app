@@ -97,98 +97,106 @@ export const Profile = () => {
   };
 
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="register"
-      autoComplete="off"
-      onFinish={onFinish}
-      scrollToFirstError
-    >
-      <Form.Item
-        name="userName"
-        label={t('name')}
-        rules={[
-          { required: true, message: nameMsg, whitespace: true },
-          {
-            pattern: /^[a-zA-Z ]{2,}$/,
-            message: nameInvalidMsg,
-          },
-        ]}
-        hasFeedback
+    <div className="user-wrap">
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        autoComplete="off"
+        onFinish={onFinish}
+        scrollToFirstError
       >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="login"
-        label={t('login')}
-        rules={[
-          { required: true, message: loginMsg, whitespace: true },
-          {
-            pattern: /^[A-Za-z\d]{5,}$/,
-            message: loginInvalidMsg,
-          },
-        ]}
-        hasFeedback
-      >
-        <Input autoComplete="username" />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        label={t('password')}
-        rules={[
-          { required: true, message: passMsg },
-          {
-            pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
-            message: passInvalidMsg,
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password autoComplete="new-password" />
-      </Form.Item>
-      <Form.Item
-        name="confirm"
-        label={t('confirmPassword')}
-        dependencies={['password']}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: confirmPassMsg,
-          },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(passMatchMsg));
+        <Form.Item
+          name="userName"
+          label={t('name')}
+          rules={[
+            { required: true, message: nameMsg, whitespace: true },
+            {
+              pattern: /^[a-zA-Z ]{2,}$/,
+              message: nameInvalidMsg,
             },
-          }),
-        ]}
-      >
-        <Input.Password autoComplete="new-password" />
-      </Form.Item>
-      <Form.Item
-        {...tailFormItemLayout}
-        extra={[
-          <Button key={'edit'} type="primary" htmlType="submit" loading={confirmLoading}>
-            {t('edit')}
-          </Button>,
-          <Button key={'del'} type="primary" onClick={showConfirm}>
-            {t('delete')}
-          </Button>,
-          <CustomModal
-            key={'del-confirm'}
-            open={openConfirm}
-            cancel={closeConfirm}
-            footer={true}
-            title={t('deleteUser')}
-          >
-            <p>{t('deleteUserQuestion')}</p>
-          </CustomModal>,
-        ]}
-      ></Form.Item>
-    </Form>
+          ]}
+          hasFeedback
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="login"
+          label={t('login')}
+          rules={[
+            { required: true, message: loginMsg, whitespace: true },
+            {
+              pattern: /^[A-Za-z\d]{5,}$/,
+              message: loginInvalidMsg,
+            },
+          ]}
+          hasFeedback
+        >
+          <Input autoComplete="username" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={t('password')}
+          rules={[
+            { required: true, message: passMsg },
+            {
+              pattern: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,12}$/,
+              message: passInvalidMsg,
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password autoComplete="new-password" />
+        </Form.Item>
+        <Form.Item
+          name="confirm"
+          label={t('confirmPassword')}
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: confirmPassMsg,
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error(passMatchMsg));
+              },
+            }),
+          ]}
+        >
+          <Input.Password autoComplete="new-password" />
+        </Form.Item>
+        <Form.Item
+          {...tailFormItemLayout}
+          extra={[
+            <Button
+              key={'edit'}
+              type="primary"
+              htmlType="submit"
+              loading={confirmLoading}
+              style={{ marginRight: 20 }}
+            >
+              {t('edit')}
+            </Button>,
+            <Button key={'del'} type="primary" onClick={showConfirm}>
+              {t('delete')}
+            </Button>,
+            <CustomModal
+              key={'del-confirm'}
+              open={openConfirm}
+              cancel={closeConfirm}
+              footer={true}
+              title={t('deleteUser')}
+            >
+              <p>{t('deleteUserQuestion')}</p>
+            </CustomModal>,
+          ]}
+        ></Form.Item>
+      </Form>
+    </div>
   );
 };
