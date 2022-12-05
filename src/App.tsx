@@ -27,7 +27,6 @@ function App() {
         const iat = (jwtDecode<JwtPayload>(token)?.iat as number) * 1000;
         const timeout = 1000 * 60 * 60 * 1;
         const expTime = decoded.exp ? dateNow - decoded.exp * 1000 : timeout - (dateNow - iat);
-        console.log(expTime);
         const timer = setTimeout(() => {
           localStorage.removeItem('token');
           navigate('/welcome');
