@@ -15,7 +15,12 @@ export const NotFound = () => {
         <h2>{t('notFoundTitle')}</h2>
         <p>{t('notFoundDesc')}</p>
 
-        <Button type="primary" style={{ marginRight: 20 }} onClick={() => navigate(-1)}>
+        <Button
+          type="primary"
+          className="not-found-btn"
+          style={{ marginRight: 20 }}
+          onClick={() => navigate(-1)}
+        >
           <ArrowLeftOutlined />
           {t('back')}
         </Button>
