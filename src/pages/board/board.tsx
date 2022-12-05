@@ -70,7 +70,7 @@ export const Board = () => {
         <CustomModal open={open} cancel={handleCancel} footer={false} title={t('newColumn')}>
           <CreateColumnForm cancel={handleCancel} data={{ title: '' }} />
         </CustomModal>
-        {renderColumns()}
+        <div className="columns-inner-wrap">{renderColumns()}</div>
       </div>
     </div>
   );
