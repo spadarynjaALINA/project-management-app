@@ -41,9 +41,9 @@ function App() {
   const boards = location.pathname.slice(0, 7);
 
   const style =
-    address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
+    address === '' ? { padding: '0', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
-    address === '' ? { padding: '0', minHeight: '100%' } : { padding: '24px', minHeight: '100%' };
+    address === '' ? { padding: '0', height: '100%' } : { padding: '24px', height: '100%' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {(location.pathname === '/' ||

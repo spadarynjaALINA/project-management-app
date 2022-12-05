@@ -1,10 +1,9 @@
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IBoard } from '../api-services/types/types';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import TaskService from '../api-services/TaskService';
 import jwt_decode from 'jwt-decode';
 import { useLocation } from 'react-router-dom';
@@ -22,6 +21,8 @@ export const CreateTaskForm = (props: {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { t } = useTranslation();
   const titleMsg = t('titleMsg');
+  const titleInvalidMsg = t('titleInvalidMsg');
+  const descriptionMsg = t('descriptionMsg');
   const data = useAppSelector(selectCurrentTask);
   const onFinish = async (values: IBoard) => {
     setConfirmLoading(true);
@@ -38,6 +39,7 @@ export const CreateTaskForm = (props: {
         );
         dispatch({ type: 'taskModalDataAction', payload: response.data });
         dispatch({ type: 'updateTasks' });
+        message.success(t('updateTaskMsg'));
       } else {
         const response = await TaskService.createTask(
           userId,
@@ -46,23 +48,20 @@ export const CreateTaskForm = (props: {
           values.title,
           values.description
         );
-
         dispatch({ type: 'taskModalDataAction', payload: response.data });
         dispatch({ type: 'updateTasks' });
+        message.success(t('createTaskMsg'));
       }
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('taskError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     } finally {
       setConfirmLoading(false);
       props.cancel();
     }
-  };
-  const onFinishFailed = (errorInfo: ValidateErrorEntity<IBoard>) => {
-    console.log('Failed:', errorInfo);
   };
   return (
     <Form
@@ -70,17 +69,27 @@ export const CreateTaskForm = (props: {
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       autoComplete="on"
       fields={[
         { name: ['title'], value: props.data.title },
         { name: ['description'], value: props.data.description },
       ]}
     >
-      <Form.Item label={t('title')} name="title" rules={[{ required: true, message: titleMsg }]}>
+      <Form.Item
+        label={t('title')}
+        name="title"
+        rules={[
+          { required: true, whitespace: true, message: titleMsg },
+          { max: 20, message: titleInvalidMsg },
+        ]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item label={t('description')} name="description">
+      <Form.Item
+        label={t('description')}
+        name="description"
+        rules={[{ required: true, whitespace: true, message: descriptionMsg }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

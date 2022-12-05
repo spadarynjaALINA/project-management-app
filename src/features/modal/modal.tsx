@@ -106,17 +106,18 @@ export const CustomModal: React.FC<{
           dispatch({ type: 'currentColumn', payload: {} });
         }
         break;
-      case 'Delete task':
+      case t('deleteTask'):
         try {
           setConfirmLoading(true);
           await TaskService.deleteTask(task.boardId as string, task.columnId as string, task.id);
           dispatch({ type: 'updateTasks' });
           setConfirmLoading(false);
+          message.success(t('deleteTaskMsg'));
         } catch (e) {
           if (axios.isAxiosError(e)) {
-            console.log(e.response?.data?.message);
+            message.error(t('taskError'));
           } else {
-            console.log(e);
+            message.error(t('noNameError'));
           }
         }
         break;
