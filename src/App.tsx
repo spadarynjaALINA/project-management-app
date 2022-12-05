@@ -18,12 +18,8 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 const { Content } = Layout;
 function App() {
   const navigate = useNavigate();
-  const [matches, setMatches] = useState(window.matchMedia('(max-width: 440px)').matches);
   useEffect(() => {
     const tokenCheck = () => {
-      window
-        .matchMedia('(max-width: 440px)')
-        .addEventListener('change', (e) => setMatches(e.matches));
       const token = localStorage.getItem('token') as string;
       if (token) {
         const dateNow = new Date().getTime();
@@ -43,11 +39,11 @@ function App() {
   const location = useLocation();
   const address = location.pathname.slice(9);
   const boards = location.pathname.slice(0, 7);
-  const height = matches ? '60vh' : '70vh';
+
   const style =
     address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
-    address === '' ? { padding: '0', minHeight: height } : { padding: '24px', minHeight: height };
+    address === '' ? { padding: '0', minHeight: '100%' } : { padding: '24px', minHeight: '100%' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {(location.pathname === '/' ||
