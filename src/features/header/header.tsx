@@ -1,10 +1,9 @@
 import { Avatar, Button, Divider, Switch } from 'antd';
-import Search from 'antd/lib/input/Search';
 import { Header } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import i18n from 'i18next';
 import './header.less';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, UserAddOutlined, MenuOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { PandaIcon } from '../../components/logo';
@@ -20,13 +19,14 @@ export const HeaderLayout = () => {
   const { t } = useTranslation();
   const userId = useAppSelector((state) => state.signIn.userId);
   const dispatch = useAppDispatch();
+  const [matches, setMatches] = useState(window.matchMedia('(max-width: 550px)').matches);
   const [userName, setUserName] = useState('');
   const [open, setOpen] = useState(false);
   const [scroll, setScroll] = useState(false);
   const scrolled = scroll ? 'header scrolled' : 'header';
   const height = scroll ? '64px' : '70px';
   const navigate = useNavigate();
-
+  const checked = localStorage.getItem('i18nextLng') === 'en';
   const handleCancel = () => {
     setOpen(false);
   };
@@ -39,36 +39,62 @@ export const HeaderLayout = () => {
     });
   };
 
-  const onSearch = (value: string) => console.log(value);
-
-  const onChange = (checked: boolean) =>
-    checked ? i18n.changeLanguage('en') : i18n.changeLanguage('ru');
+  const onChange = (checked: boolean) => {
+    if (checked) {
+      i18n.changeLanguage('en');
+      localStorage.setItem('i18nextLng', 'en');
+    } else {
+      i18n.changeLanguage('ru');
+      localStorage.setItem('i18nextLng', 'ru');
+    }
+  };
 
   const onExit = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
-  const items: MenuProps['items'] = [
-    {
-      label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
-      key: '0',
-    },
-    {
-      label: <a href="#">{t('tasks')}</a>,
-      key: '1',
-    },
-    {
-      label: <p onClick={onExit}>{t('signOut')}</p>,
-      key: '2',
-    },
-  ];
-
+  const items: MenuProps['items'] = !matches
+    ? [
+        {
+          label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+          key: '0',
+        },
+        {
+          label: <a href="#">{t('tasks')}</a>,
+          key: '1',
+        },
+        {
+          label: <p onClick={onExit}>{t('signOut')}</p>,
+          key: '2',
+        },
+      ]
+    : [
+        {
+          label: <p onClick={() => navigate('/boards')}>{t('mainPage')}</p>,
+          key: '0',
+        },
+        {
+          label: <p onClick={() => showModal()}>{t('newBoard')}</p>,
+          key: '1',
+        },
+        {
+          label: <p onClick={() => navigate('/profile')}>{t('profile')}</p>,
+          key: '2',
+        },
+        {
+          label: <p onClick={onExit}>{t('signOut')}</p>,
+          key: '3',
+        },
+      ];
   useEffect(() => {
     const onScroll = () => {
       window.pageYOffset === 0 ? setScroll(false) : setScroll(true);
     };
     window.addEventListener('scroll', onScroll);
+    window
+      .matchMedia('(max-width: 550px)')
+      .addEventListener('change', (e) => setMatches(e.matches));
     const token = localStorage.getItem('token');
     if (token) {
       const fetchData = async () => {
@@ -89,7 +115,8 @@ export const HeaderLayout = () => {
           <NavLink to="/welcome" className="logo">
             <PandaIcon style={{ fontSize: '48px' }} />
           </NavLink>
-          {isAuth && (
+
+          {isAuth && !matches && (
             <div className="boards-block">
               <NavLink to="/boards">
                 <Button type="primary" style={{ color: 'white', marginRight: 20 }}>
@@ -99,40 +126,47 @@ export const HeaderLayout = () => {
               <Button onClick={showModal} type="primary" ghost>
                 {t('newBoard')} <PlusOutlined />
               </Button>
-              <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
-                <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
-              </CustomModal>
             </div>
           )}
         </div>
 
         <div className="auth-wrap">
-          {isAuth && (
-            <Search placeholder={t('searchTasks')} onSearch={onSearch} style={{ width: 200 }} />
-          )}
           {!isAuth && (
             <div>
               <NavLink to="/signup">
                 <Button type="text" style={{ color: 'white' }}>
-                  {t('signUp')}
+                  {matches ? <UserAddOutlined /> : t('signUp')}
                 </Button>
               </NavLink>
               <Divider type="vertical" style={{ background: 'white' }} />
               <NavLink to="/signin">
                 <Button type="text" style={{ color: 'white' }}>
-                  {t('signIn')}
+                  {matches ? <span className="signin-span" /> : t('signIn')}
                 </Button>
-              </NavLink>
+              </NavLink>{' '}
             </div>
           )}
-
-          <Switch checkedChildren="EN" unCheckedChildren="Ру" defaultChecked onChange={onChange} />
+          <CustomModal open={open} cancel={handleCancel} footer={false} title={'New Board'}>
+            <CreateBoardForm cancel={handleCancel} data={{ title: '', description: '' }} />
+          </CustomModal>
+          <Switch
+            checkedChildren="EN"
+            unCheckedChildren="Ру"
+            defaultChecked={checked}
+            onChange={onChange}
+          />
           {isAuth && (
             <Dropdown menu={{ items }} trigger={['click']}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <Avatar size={48}>{userName}</Avatar>
-                  <DownOutlined />
+                  {matches ? (
+                    <MenuOutlined style={{ fontSize: 48, marginTop: 16 }} />
+                  ) : (
+                    <>
+                      <Avatar size={48}>{userName}</Avatar>
+                      <DownOutlined />
+                    </>
+                  )}
                 </Space>
               </a>
             </Dropdown>

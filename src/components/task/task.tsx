@@ -1,9 +1,10 @@
-import { Avatar, Card } from 'antd';
+import { Avatar, Card, message } from 'antd';
 import { useState } from 'react';
 import { ITask } from '../../api-services/types/types';
 import { CustomModal } from '../../features/modal/modal';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { CreateTaskForm } from '../createTask';
 import jwt_decode from 'jwt-decode';
 import { selectCurrentTask } from './taskSlice';
@@ -13,6 +14,7 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
   const token = localStorage.getItem('token');
   const { login } = token ? (jwt_decode(token) as { login: string }) : { login: '' };
   const description = props.props.description;
+  const { t } = useTranslation();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -110,11 +112,12 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
       }
 
       dispatch({ type: 'updateTasks' });
+      message.success(t('updateTaskMsg'));
     } catch (e) {
       if (axios.isAxiosError(e)) {
-        console.log(e.response?.data?.message);
+        message.error(t('taskError'));
       } else {
-        console.log(e);
+        message.error(t('noNameError'));
       }
     }
   };
@@ -136,7 +139,7 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
           open={open}
           cancel={handleCancel}
           footer={false}
-          title={'Edit task'}
+          title={t('editTask')}
         >
           <CreateTaskForm
             cancel={handleCancel}
@@ -154,9 +157,9 @@ export const TaskComponent = (props: { props: ITask; user: string }) => {
           open={openConfirm}
           cancel={closeConfirm}
           footer={true}
-          title={'Delete task'}
+          title={t('deleteTask')}
         >
-          <p>Are you really want to delete this task?</p>
+          <p>{t('deleteTaskQuestion')}</p>
         </CustomModal>,
       ]}
       actions={[

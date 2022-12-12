@@ -6,7 +6,7 @@ import { CreateBoardForm } from '../createBoard';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
+import './boardComponent.less';
 export const BoardComponent = (props: {
   props: { boardId: string; title: string; description: string };
 }) => {
@@ -85,7 +85,7 @@ export const BoardComponent = (props: {
           <p>{t('deleteBoardQuestion')}</p>
         </CustomModal>,
       ]}
-      style={{ width: 250, maxHeight: '70vh', overflow: 'hidden' }}
+      // style={{ width: 250, maxHeight: '70vh', overflow: 'hidden' }}
     >
       {props.props.description || ''}
     </Card>

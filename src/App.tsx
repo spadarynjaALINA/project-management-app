@@ -8,20 +8,41 @@ import './App.less';
 import { Main } from './pages/main/main';
 import { Board } from './pages/board/board';
 import { NotFound } from './pages/not-found/not-found';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Welcome } from './pages/welcome/welcome';
 import { PrivateRoute } from './PrivateRoute';
 import { Profile } from './pages/profile/profile';
 import { Start } from './pages/start/start';
+import { useEffect, useState } from 'react';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 const { Content } = Layout;
 function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const tokenCheck = () => {
+      const token = localStorage.getItem('token') as string;
+      if (token) {
+        const dateNow = new Date().getTime();
+        const decoded = jwtDecode<JwtPayload>(token);
+        const iat = (jwtDecode<JwtPayload>(token)?.iat as number) * 1000;
+        const timeout = 1000 * 60 * 60 * 1;
+        const expTime = decoded.exp ? dateNow - decoded.exp * 1000 : timeout - (dateNow - iat);
+        const timer = setTimeout(() => {
+          localStorage.removeItem('token');
+          navigate('/welcome');
+        }, expTime);
+        return () => clearTimeout(timer);
+      }
+    };
+    tokenCheck();
+  });
   const location = useLocation();
   const address = location.pathname.slice(9);
   const boards = location.pathname.slice(0, 7);
   const style =
-    address === '' ? { padding: '0 ', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
+    address === '' ? { padding: '0', marginTop: 64 } : { padding: '0 20px', marginTop: 64 };
   const bgStyle =
-    address === '' ? { padding: '0', minHeight: '75vh' } : { padding: '24px', minHeight: '75vh' };
+    address === '' ? { padding: '0', height: '100%' } : { padding: '24px 0', height: '100%' };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {(location.pathname === '/' ||
